@@ -1,0 +1,386 @@
+@use "./variables";
+
+@mixin boxShadow() {
+  box-shadow: 0px 0px 0px 1px #e2e2e2;
+  border-radius: 10px;
+}
+
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+input {
+  height: 35px !important;
+}
+
+li {
+  list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+table {
+  border-spacing: 0px;
+  width: 100%;
+}
+
+.has-font-13 {
+  font-size: 13px !important;
+}
+
+.click {
+  cursor: pointer !important;
+}
+
+.is-active {
+  display: block !important;
+}
+
+.is-none {
+  display: none;
+}
+
+#sidebar {
+  padding: 1rem 0 3rem;
+  width: 200px;
+  background-color: #585c7d;
+  position: fixed;
+  height: 100vh;
+  transition: all 0.1s;
+  z-index: 2;
+
+  /* width */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  /* Track */
+  ::-webkit-scrollbar-track {
+    background: #4f5370;
+  }
+
+  /* Handle */
+  ::-webkit-scrollbar-thumb {
+    background: #2e3250;
+  }
+
+  /* Handle on hover */
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2e3250;
+  }
+
+  .scroll-y {
+    overflow-y: auto;
+    overflow-x: hidden;
+    
+    max-height: calc(100vh - 120px);
+    a {
+      justify-content: space-between;
+      color: white;
+      width: 100%;
+      &:hover {
+        border-radius: 5px;
+        background-color: #60688e;
+      }
+    }
+  }
+
+  .quarter-calendar:hover {
+    .sub-menu-top {
+      display: block;
+    }
+  }
+
+  li {
+    font-size: 14px;
+    .icon-text:hover {
+      width: 100%;
+      border-radius: 5px;
+      background-color: #60688e;
+    }
+    li {
+      font-size: 13px;
+      li {
+        font-size: 12px;
+        border-left: 1px solid #ccc;
+        margin-left: 25px;
+      }
+    }
+  }
+
+  .dropdown-menu {
+    left: -10px;
+  }
+
+  .dropdown-content {
+    width: fit-content;
+  }
+
+  .sign-out {
+    width: calc(100% - 1rem);
+    justify-content: flex-start;
+    position: absolute;
+    bottom: 0.5rem;
+    left: 0.5rem;
+    .icon-text:hover {
+      width: 100%;
+      border-radius: 5px;
+      background-color: #60688e;
+    }
+  }
+}
+
+.sidebar-small {
+  width: 60px !important;
+
+  .quarter-calendar,
+  .icon-arrow {
+    display: none;
+  }
+  li {
+    .link-name {
+      position: absolute;
+      white-space: nowrap;
+      left: 3.75rem;
+      top: 10px;
+      padding: 5px 16px;
+      border-radius: 5px;
+      background-color: #355caa;
+      color: white;
+      font-weight: 600;
+      z-index: 20;
+      display: none;
+    }
+
+    &:hover {
+      .link-name {
+        display: inline;
+        top: 2px;
+      }
+    }
+  }
+}
+
+#content {
+  padding-left: 200px;
+
+  .main-header {
+    background-color: variables.$backgroundContent;
+    padding: 16px;
+    padding-left: 200px;
+    border-bottom: 1px solid variables.$borderColor;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+
+  .todo-list {
+    padding-left: 200px;
+
+    .team-left {
+      width: 210px;
+      position: sticky;
+      border-radius: 1px;
+      box-shadow: 0px 0px 0px 1px #e2e2e2;
+      top: 60px;
+    }
+
+    .content-right {
+      .content-top {
+        @include boxShadow();
+      }
+
+      .main-content {
+        @include boxShadow();
+
+        .input-calendar {
+          display: flex;
+          height: 100%;
+          align-items: center;
+
+          .calendar-item {
+            display: flex;
+            border: 0.05rem solid #355caa;
+            border-radius: 5px 0 0 5px;
+            align-items: center;
+
+            .date-of-week {
+              width: 25px;
+            }
+          }
+
+          .calendar-back {
+            border: 0.05rem solid #355caa;
+            display: flex;
+            border-right: unset !important;
+            border-left: unset !important;
+          }
+
+          .calendar-forward {
+            border: 0.05rem solid #355caa;
+            border-radius: 0px 5px 5px 0px;
+            display: flex;
+          }
+
+          .calendar-back:hover,
+          .calendar-forward:hover {
+            background-color: #3e56c4;
+            cursor: pointer;
+            color: white;
+          }
+        }
+
+        .table-todolist {
+          tbody {
+            tr:nth-child(odd) {
+              td:first-child {
+                p {
+                  white-space: nowrap;
+                  overflow-x: hidden;
+                  text-overflow: ellipsis;
+                  width: 350px;
+                }
+              }
+
+              td {
+                border: none;
+              }
+              td:last-child {
+                .dropdown {
+                  border-radius: 20px;
+                }
+              }
+              .dropdown {
+                box-shadow: none;
+                border: 1px solid #e2e2e2;
+                width: 100px;
+                height: 39px;
+                padding: 5px 8px;
+                position: relative;
+
+                .dropdown-content {
+                  width: fit-content;
+                  text-align: left;
+                  left: 7px;
+                  position: absolute;
+
+                  .dropdown-item:hover {
+                    background-color: #f5f5f5;
+                  }
+                }
+              }
+            }
+
+            tr:nth-child(even) {
+              td {
+                border-bottom: 1px solid #dbdbdb;
+              }
+              td:last-child {
+                vertical-align: bottom;
+              }
+            }
+          }
+
+          .select-input {
+            box-shadow: 0 0 0 1px #e2e2e2;
+            border-radius: 5px;
+            height: 35px;
+
+            select {
+              border: #dbdbdb !important;
+              outline: none;
+              width: 100%;
+              &:hover {
+                cursor: pointer;
+              }
+            }
+          }
+        }
+
+        .last-detail-todolist {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+
+          .advice {
+            font-weight: bold;
+            padding-bottom: 0px;
+          }
+          .control {
+            display: flex;
+            align-items: center;
+
+            .button-control {
+              display: flex;
+              height: 35px;
+              align-items: center;
+              justify-content: space-between;
+              color: white;
+              border-radius: 5px;
+              padding: 6px 14px;
+            }
+
+            .add {
+              background-color: #585c7d;
+
+              &:hover {
+                cursor: pointer;
+                background-color: #3488ce;
+              }
+            }
+
+            .check-out {
+              background-color: #f03a5f;
+              margin-left: 1rem;
+
+              &:hover {
+                background-color: #bd2d4a;
+              }
+            }
+            .check-in {
+              background-color: #355caa;
+              margin-left: 1rem;
+
+              &:hover {
+                background-color: #3e56c4;
+              }
+            }
+          }
+        }
+      }
+
+      .table-history-todolist {
+        @include boxShadow();
+        td,
+        th {
+          border: none;
+        }
+
+        .title-history {
+          display: flex;
+          justify-content: space-between;
+
+          .dropdown-trigger {
+            display: flex;
+            color: #4569b1;
+          }
+        }
+
+        .dropdown-content {
+          width: fit-content;
+        }
+      }
+    }
+  }
+}

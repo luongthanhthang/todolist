@@ -1,0 +1,45 @@
+{
+  "Files": [
+    {
+      "Id": "D:\\conando\\blazor\\WorkDo1\\wwwroot\\css\\bulma.min.css",
+      "PackagePath": "staticwebassets\\css\\bulma.min.css"
+    },
+    {
+      "Id": "D:\\conando\\blazor\\WorkDo1\\wwwroot\\css\\site.css",
+      "PackagePath": "staticwebassets\\css\\site.css"
+    },
+    {
+      "Id": "D:\\conando\\blazor\\WorkDo1\\wwwroot\\css\\site.css.map",
+      "PackagePath": "staticwebassets\\css\\site.css.map"
+    },
+    {
+      "Id": "D:\\conando\\blazor\\WorkDo1\\wwwroot\\favicon.ico",
+      "PackagePath": "staticwebassets\\favicon.ico"
+    },
+    {
+      "Id": "D:\\conando\\blazor\\WorkDo1\\wwwroot\\scss\\site.scss",
+      "PackagePath": "staticwebassets\\scss\\site.scss"
+    },
+    {
+      "Id": "D:\\conando\\blazor\\WorkDo1\\wwwroot\\scss\\variables.scss",
+      "PackagePath": "staticwebassets\\scss\\variables.scss"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.WorkDo1.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.build.WorkDo1.props",
+      "PackagePath": "build\\WorkDo1.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.buildMultiTargeting.WorkDo1.props",
+      "PackagePath": "buildMultiTargeting\\WorkDo1.props"
+    },
+    {
+      "Id": "obj\\Debug\\net6.0\\staticwebassets\\msbuild.buildTransitive.WorkDo1.props",
+      "PackagePath": "buildTransitive\\WorkDo1.props"
+    }
+  ],
+  "ElementsToRemove": []
+}

@@ -1,0 +1,15 @@
+﻿@inherits LayoutComponentBase
+
+<PageTitle>WorkDo1</PageTitle>
+
+<CascadingValue Value="this">
+  <main class="columns is-gapless mb-2">
+    <aside class="column is-narrow">
+      <Sidebar />
+    </aside>
+    <section id="content" class="column">
+      <Header />
+      @Body
+    </section>
+  </main>
+</CascadingValue>

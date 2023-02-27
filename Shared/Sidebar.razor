@@ -1,0 +1,217 @@
+@inject ProtectedLocalStorage ProtectedLocalStore
+@inject NavigationManager navigation
+
+<section class="@(isSmall ? "sidebar-small" : "")" id="sidebar">
+  <div class="columns is-vcentered is-gapless px-2 mb-0 logo-details">
+    <a class="column is-narrow icon-menu" @onclick="NavToggle">
+      <span class="material-icons-outlined has-text-white p-2 click">menu</span>
+    </a>
+    <div class="column has-text-right has-text-white quarter-calendar">
+      <div class="dropdown is-hoverable is-left click">
+        <a class="dropdown-trigger">
+          <span class="icon-text has-text-white">
+            <span class="has-text-weight-medium">Quý I - 2023</span>
+            <span class="icon">
+              <span class="material-icons-outlined is-size-7"> arrow_drop_down</span>
+            </span>
+          </span>
+        </a>
+        <div class="dropdown-menu">
+          <div class="dropdown-content has-font-13 has-text-left">
+            <a class="dropdown-item px-4 py-1">Quý I - 2023</a>
+            <a class="dropdown-item px-4 py-1">Quý IV - 2022</a>
+            <a class="dropdown-item px-4 py-1">Quý III - 2022</a>
+            <a class="dropdown-item px-4 py-1">Quý II - 2022</a>
+            <a class="dropdown-item px-4 py-1">Quý I - 2022</a>
+            <a class="dropdown-item px-4 py-1">Quý IV - 2021</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <nav class="scroll-y">
+    <ul class="px-2 mt-4">
+      @foreach (SidebarModel navItem in sidebarList)
+      {
+      <li class="click mb-2">
+        <a href = "@navItem.url" class="px-1 py-1 icon-text has-text-white is-align-items-center is-justify-content-space-between">
+          <div href = "@navItem.url" class="is-flex is-align-items-center">
+            <span class="icon">
+              <span class="material-icons-outlined is-size-6">@navItem.icon</span>
+            </span>
+            <span class="has-text-weight-medium link-name">@navItem.name</span>
+          </div>
+          <span class="material-icons-outlined is-size-6 icon-arrow">@(navItem.subMenu != null ? "arrow_right" : "")</span>
+        </a>
+        @if(navItem.subMenu != null)
+        {
+        <ul>
+        @foreach (SidebarModel navSubItem in navItem.subMenu)
+        {
+          <li class="click pl-2">
+            <a href = "@navSubItem.url" class="px-1 py-1 icon-text has-text-white is-align-items-center">
+              <div class="is-flex is-align-items-center">
+                <span class="icon">
+                  <span class="material-icons-outlined is-size-6">@navSubItem.icon</span>
+                </span>
+                <span class="has-text-weight-medium link-name">@navSubItem.name</span>
+              </div>
+              <span class="material-icons-outlined is-size-6 icon-arrow">@(navSubItem.subMenu != null ? "arrow_right" : "")</span>
+            </a>
+          @if(navSubItem.subMenu != null)
+          {
+            <ul>
+            @foreach (var navSubSubItem in navSubItem.subMenu)
+            {
+              <li class="click">
+                <a href = "@navSubSubItem.url" class="px-1 py-1 icon-text has-text-white is-align-items-center is-justify-content-space-between">
+                  <div class="is-flex is-align-items-center">
+                    <span class="icon">
+                      <span class="material-icons-outlined is-size-6">@navSubSubItem.icon</span>
+                    </span>
+                    <span class="has-text-weight-medium link-name">@navSubSubItem.name</span>
+                  </div>
+                  <span class="material-icons-outlined is-size-6 icon-arrow">@(navSubSubItem.subMenu != null ? "arrow_right" : "")</span>
+                </a>
+              </li>
+            }
+            </ul>
+          }
+          </li>
+        }
+        </ul>
+        }
+      </li>
+      }
+    </ul>
+    <div class="click sign-out">
+      <a class="px-1 py-1 icon-text has-text-white is-align-items-center is-justify-content-space-between">
+        <div class="is-flex is-align-items-center">
+          <span class="icon">
+            <span class="material-icons-outlined is-size-6">logout</span>
+          </span>
+          <span class="has-text-weight-medium link-name">Đăng xuất</span>
+        </div>
+      </a>
+    </div>
+  </nav>
+</section>
+
+@code{
+    private List<SidebarModel> sidebarList = new();
+    private bool isSmall = false;
+
+    protected override void OnInitialized()
+    {
+      getSidebarList();
+    }
+    protected override async Task OnAfterRenderAsync(bool firstRender)
+    {
+        if (firstRender)
+        {
+            var result = await ProtectedLocalStore.GetAsync<bool>("nav");
+            isSmall = result.Success ? result.Value : false;
+            StateHasChanged();
+        }
+    }
+
+    private async Task NavToggle()
+    {
+        isSmall = !isSmall;
+        await ProtectedLocalStore.SetAsync("nav", isSmall);
+    }
+
+  private void getSidebarList() {
+    sidebarList = new List<SidebarModel> {
+      new SidebarModel {
+        name = "Tin tức",
+        url = "blogs",
+        icon = "dashboard"
+      },
+      new SidebarModel {
+        name = "Thống kê",
+        url = "reports",
+        icon = "bar_chart"
+      },
+      new SidebarModel {
+        name = "Đội nhóm",
+        url = "teams",
+        icon = "group"
+      },
+      new SidebarModel {
+        name = "Todolist",
+        url = "todolist",
+        icon = "check_box"
+      },
+      new SidebarModel {
+        name = "Kế hoạch",
+        url = "work",
+        icon = "view_timeline"
+      },
+      new SidebarModel {
+        name = "OKRs",
+        url = "#okr",
+        icon = "track_changes",
+        subMenu = new List<SidebarModel>
+        {
+          new SidebarModel { 
+            name = "Thiết lập", url = "#okr/setup",
+            subMenu = new List<SidebarModel>
+            {
+              new SidebarModel { name = "Timeline", url = "okr/setup/timeline" },
+              new SidebarModel { name = "Góp ý mục tiêu", url = "okr/setup/suggest" },
+              new SidebarModel { name = "Công bố mục tiêu", url = "okr/setup/target" },
+              new SidebarModel { name = "Tạo OKRs", url = "okr/setup/detail" },
+            }
+          },
+          new SidebarModel { name = "Hành động", url = "okr/tasks" },
+          new SidebarModel { name = "Tổng quan", url = "okr/overview" },
+        }
+      },
+      new SidebarModel {
+        name = "CFRs",
+        url = "#cfr",
+        icon = "grade",
+        subMenu = new List<SidebarModel>
+        {
+          new SidebarModel { name = "Check-in", url = "cfr/checkin" },
+          new SidebarModel { name = "Ghi nhận - Tặng sao", url = "cfr/star" }
+        }
+      },
+      new SidebarModel {
+        name = "Kaizen",
+        url = "kaizen",
+        icon = "show_chart"
+      },
+      new SidebarModel {
+        name = "Đổi quà",
+        url = "#gift",
+        icon = "card_giftcard",
+        subMenu = new List<SidebarModel>
+        {
+          new SidebarModel { name = "Cửa hàng", url = "gift/product" },
+          new SidebarModel { name = "Lịch sử đổi quà", url = "gift/exchange" }
+        }
+      },
+      new SidebarModel {
+        name = "Đào tạo",
+        url = "#educate",
+        icon = "book",
+        subMenu = new List<SidebarModel>
+        {
+          new SidebarModel { name = "Khóa học", url = "educate/course/list" },
+          new SidebarModel { name = "Quản lý khóa học", url = "educate/course/manager" },
+          new SidebarModel { name = "Chấm bài thi", url = "educate/exam/manager" },
+          new SidebarModel { name = "Cấp chứng chỉ", url = "educate/certificate/manager" },
+          new SidebarModel { name = "Chứng chỉ đạt được", url = "educate/certificate/list" },
+        }
+      },
+      new SidebarModel {
+        name = "Tài khoản",
+        url = "user/info",
+        icon = "account_circle"
+      }
+    };
+  }
+}

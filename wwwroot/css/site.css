@@ -1,0 +1,321 @@
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  font-family: "Inter", Arial, sans-serif;
+}
+
+input {
+  height: 35px !important;
+}
+
+li {
+  list-style-type: none;
+}
+
+a {
+  text-decoration: none;
+}
+
+table {
+  border-spacing: 0px;
+  width: 100%;
+}
+
+.has-font-13 {
+  font-size: 13px !important;
+}
+
+.click {
+  cursor: pointer !important;
+}
+
+.is-active {
+  display: block !important;
+}
+
+.is-none {
+  display: none;
+}
+
+#sidebar {
+  padding: 1rem 0 3rem;
+  width: 200px;
+  background-color: #585c7d;
+  position: fixed;
+  height: 100vh;
+  transition: all 0.1s;
+  z-index: 2;
+  /* width */
+  /* Track */
+  /* Handle */
+  /* Handle on hover */
+}
+#sidebar ::-webkit-scrollbar {
+  width: 8px;
+}
+#sidebar ::-webkit-scrollbar-track {
+  background: #4f5370;
+}
+#sidebar ::-webkit-scrollbar-thumb {
+  background: #2e3250;
+}
+#sidebar ::-webkit-scrollbar-thumb:hover {
+  background: #2e3250;
+}
+#sidebar .scroll-y {
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: calc(100vh - 120px);
+}
+#sidebar .scroll-y a {
+  justify-content: space-between;
+  color: white;
+  width: 100%;
+}
+#sidebar .scroll-y a:hover {
+  border-radius: 5px;
+  background-color: #60688e;
+}
+#sidebar .quarter-calendar:hover .sub-menu-top {
+  display: block;
+}
+#sidebar li {
+  font-size: 14px;
+}
+#sidebar li .icon-text:hover {
+  width: 100%;
+  border-radius: 5px;
+  background-color: #60688e;
+}
+#sidebar li li {
+  font-size: 13px;
+}
+#sidebar li li li {
+  font-size: 12px;
+  border-left: 1px solid #ccc;
+  margin-left: 25px;
+}
+#sidebar .dropdown-menu {
+  left: -10px;
+}
+#sidebar .dropdown-content {
+  width: fit-content;
+}
+#sidebar .sign-out {
+  width: calc(100% - 1rem);
+  justify-content: flex-start;
+  position: absolute;
+  bottom: 0.5rem;
+  left: 0.5rem;
+}
+#sidebar .sign-out .icon-text:hover {
+  width: 100%;
+  border-radius: 5px;
+  background-color: #60688e;
+}
+
+.sidebar-small {
+  width: 60px !important;
+}
+.sidebar-small .quarter-calendar,
+.sidebar-small .icon-arrow {
+  display: none;
+}
+.sidebar-small li .link-name {
+  position: absolute;
+  white-space: nowrap;
+  left: 3.75rem;
+  top: 10px;
+  padding: 5px 16px;
+  border-radius: 5px;
+  background-color: #355caa;
+  color: white;
+  font-weight: 600;
+  z-index: 20;
+  display: none;
+}
+.sidebar-small li:hover .link-name {
+  display: inline;
+  top: 2px;
+}
+
+#content {
+  padding-left: 200px;
+}
+#content .main-header {
+  background-color: #fff;
+  padding: 16px;
+  padding-left: 200px;
+  border-bottom: 1px solid #e2e2e2;
+  position: sticky;
+  top: 0;
+  z-index: 1;
+}
+#content .todo-list {
+  padding-left: 200px;
+}
+#content .todo-list .team-left {
+  width: 210px;
+  position: sticky;
+  border-radius: 1px;
+  box-shadow: 0px 0px 0px 1px #e2e2e2;
+  top: 60px;
+}
+#content .todo-list .content-right .content-top {
+  box-shadow: 0px 0px 0px 1px #e2e2e2;
+  border-radius: 10px;
+}
+#content .todo-list .content-right .main-content {
+  box-shadow: 0px 0px 0px 1px #e2e2e2;
+  border-radius: 10px;
+}
+#content .todo-list .content-right .main-content .input-calendar {
+  display: flex;
+  height: 100%;
+  align-items: center;
+}
+#content .todo-list .content-right .main-content .input-calendar .calendar-item {
+  display: flex;
+  border: 0.05rem solid #355caa;
+  border-radius: 5px 0 0 5px;
+  align-items: center;
+}
+#content .todo-list .content-right .main-content .input-calendar .calendar-item .date-of-week {
+  width: 25px;
+}
+#content .todo-list .content-right .main-content .input-calendar .calendar-back {
+  border: 0.05rem solid #355caa;
+  display: flex;
+  border-right: unset !important;
+  border-left: unset !important;
+}
+#content .todo-list .content-right .main-content .input-calendar .calendar-forward {
+  border: 0.05rem solid #355caa;
+  border-radius: 0px 5px 5px 0px;
+  display: flex;
+}
+#content .todo-list .content-right .main-content .input-calendar .calendar-back:hover,
+#content .todo-list .content-right .main-content .input-calendar .calendar-forward:hover {
+  background-color: #3e56c4;
+  cursor: pointer;
+  color: white;
+}
+#content .todo-list .content-right .main-content .table-todolist tbody tr:nth-child(odd) td:first-child p {
+  white-space: nowrap;
+  overflow-x: hidden;
+  text-overflow: ellipsis;
+  width: 350px;
+}
+#content .todo-list .content-right .main-content .table-todolist tbody tr:nth-child(odd) td {
+  border: none;
+}
+#content .todo-list .content-right .main-content .table-todolist tbody tr:nth-child(odd) td:last-child .dropdown {
+  border-radius: 20px;
+}
+#content .todo-list .content-right .main-content .table-todolist tbody tr:nth-child(odd) .dropdown {
+  box-shadow: none;
+  border: 1px solid #e2e2e2;
+  width: 100px;
+  height: 39px;
+  padding: 5px 8px;
+  position: relative;
+}
+#content .todo-list .content-right .main-content .table-todolist tbody tr:nth-child(odd) .dropdown .dropdown-content {
+  width: fit-content;
+  text-align: left;
+  left: 7px;
+  position: absolute;
+}
+#content .todo-list .content-right .main-content .table-todolist tbody tr:nth-child(odd) .dropdown .dropdown-content .dropdown-item:hover {
+  background-color: #f5f5f5;
+}
+#content .todo-list .content-right .main-content .table-todolist tbody tr:nth-child(even) td {
+  border-bottom: 1px solid #dbdbdb;
+}
+#content .todo-list .content-right .main-content .table-todolist tbody tr:nth-child(even) td:last-child {
+  vertical-align: bottom;
+}
+#content .todo-list .content-right .main-content .table-todolist .select-input {
+  box-shadow: 0 0 0 1px #e2e2e2;
+  border-radius: 5px;
+  height: 35px;
+}
+#content .todo-list .content-right .main-content .table-todolist .select-input select {
+  border: #dbdbdb !important;
+  outline: none;
+  width: 100%;
+}
+#content .todo-list .content-right .main-content .table-todolist .select-input select:hover {
+  cursor: pointer;
+}
+#content .todo-list .content-right .main-content .last-detail-todolist {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+#content .todo-list .content-right .main-content .last-detail-todolist .advice {
+  font-weight: bold;
+  padding-bottom: 0px;
+}
+#content .todo-list .content-right .main-content .last-detail-todolist .control {
+  display: flex;
+  align-items: center;
+}
+#content .todo-list .content-right .main-content .last-detail-todolist .control .button-control {
+  display: flex;
+  height: 35px;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+  border-radius: 5px;
+  padding: 6px 14px;
+}
+#content .todo-list .content-right .main-content .last-detail-todolist .control .add {
+  background-color: #585c7d;
+}
+#content .todo-list .content-right .main-content .last-detail-todolist .control .add:hover {
+  cursor: pointer;
+  background-color: #3488ce;
+}
+#content .todo-list .content-right .main-content .last-detail-todolist .control .check-out {
+  background-color: #f03a5f;
+  margin-left: 1rem;
+}
+#content .todo-list .content-right .main-content .last-detail-todolist .control .check-out:hover {
+  background-color: #bd2d4a;
+}
+#content .todo-list .content-right .main-content .last-detail-todolist .control .check-in {
+  background-color: #355caa;
+  margin-left: 1rem;
+}
+#content .todo-list .content-right .main-content .last-detail-todolist .control .check-in:hover {
+  background-color: #3e56c4;
+}
+#content .todo-list .content-right .table-history-todolist {
+  box-shadow: 0px 0px 0px 1px #e2e2e2;
+  border-radius: 10px;
+}
+#content .todo-list .content-right .table-history-todolist td,
+#content .todo-list .content-right .table-history-todolist th {
+  border: none;
+}
+#content .todo-list .content-right .table-history-todolist .title-history {
+  display: flex;
+  justify-content: space-between;
+}
+#content .todo-list .content-right .table-history-todolist .title-history .dropdown-trigger {
+  display: flex;
+  color: #4569b1;
+}
+#content .todo-list .content-right .table-history-todolist .dropdown-content {
+  width: fit-content;
+}
+
+/*# sourceMappingURL=site.css.map */

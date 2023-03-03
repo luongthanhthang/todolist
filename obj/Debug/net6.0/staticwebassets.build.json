@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "OYsvc2gkDaNLnXTQFQV0+fvgLy78H5ShmC/KAXHGnnk=",
+  "Hash": "7TBNhcLV7NT21DgNlhV1Oo57kerLB+CDZ8yjW/ek+Mw=",
   "Source": "WorkDo1",
   "BasePath": "_content/WorkDo1",
   "Mode": "Default",
@@ -83,6 +83,23 @@
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
       "OriginalItemSpec": "wwwroot\\favicon.ico"
+    },
+    {
+      "Identity": "D:\\conando\\blazor\\WorkDo1\\wwwroot\\js\\index.js",
+      "SourceId": "WorkDo1",
+      "SourceType": "Discovered",
+      "ContentRoot": "D:\\conando\\blazor\\WorkDo1\\wwwroot\\",
+      "BasePath": "_content/WorkDo1",
+      "RelativePath": "js/index.js",
+      "AssetKind": "All",
+      "AssetMode": "All",
+      "AssetRole": "Primary",
+      "RelatedAsset": "",
+      "AssetTraitName": "",
+      "AssetTraitValue": "",
+      "CopyToOutputDirectory": "Never",
+      "CopyToPublishDirectory": "PreserveNewest",
+      "OriginalItemSpec": "wwwroot\\js\\index.js"
     },
     {
       "Identity": "D:\\conando\\blazor\\WorkDo1\\wwwroot\\scss\\site.scss",

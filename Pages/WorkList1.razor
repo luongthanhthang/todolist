@@ -1,0 +1,681 @@
+@page "/todolist1"
+
+@inject IJSRuntime JsRuntime
+@* @page "/todolist/{currentDate?}" *@
+
+<section class="todo-list columns is-gapless py-1">
+  <div class="column is-narrow p-0">
+    <div class="py-3 team-left py-3"></div>
+  </div>
+
+  <div class="column mx-4" style="width: calc(100% - 210px);">
+    <div class="content-right">
+      <div class="content-top p-5">
+        <ul class="columns is-vcentered">
+          <li class="column">
+            <span class="icon-text">
+              <span class="icon image is-48x48">
+                <img class="is-rounded" src="https://avatars.dicebear.com/api/adventurer-neutral/231441AAFA.svg">
+              </span>
+              <div class="pl-2">
+                <p>Lương Thanh Thắng</p>
+                <p>DOCORP / CONANDO / Team Dev</p>
+              </div>
+            </span>
+          </li>
+          <li class="column is-narrow">
+            <a class="p-5 has-text-black">
+              <span class="is-size-6">Todolist</span>
+            </a>
+          </li>
+          <li class="column is-narrow">
+            <a class="p-5 has-text-black">
+              <span class="is-size-6">Todolist</span>
+            </a>
+          </li>
+          <li class="column is-narrow">
+            <a class="p-5 has-text-black">
+              <span class="is-size-6">Todolist</span>
+            </a>
+          </li>
+          <li class="column is-narrow">
+            <a class="p-5 has-text-black">
+              <span class="is-size-6">Todolist</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+
+      <div class="py-4 has-text-grey has-text-centered">
+        <p class="is-italic">"Sống phải có đam mê, tôi chưa thấy ai thành công mà không có đam mê của riêng mình."
+          — Donald Trump</p>
+      </div>
+
+      <div class="main-content p-5">
+        <div class="columns is-gapless">
+          <div class="column">
+            <p class="has-text-grey-dark is-size-4 has-text-weight-bold">CHI TIẾT TODOLIST</p>
+            <p class="is-size-7 has-text-info is-italic">Lựa chọn ngày phù hợp và tạo list công việc</p>
+          </div>
+          <div class="column is-narrow">
+            <div class="input-calendar">
+              <div class="calendar-item p-2">
+                <span class="icon">
+                  <span class="material-icons-outlined is-size-7 mr-2">
+                    calendar_month
+                  </span>
+                </span>
+                <div class="is-flex">
+                  <p class="date-of-week"> @TimeArray.getDateOfWeek(currentTime)</p>
+                  <p> - @currentTime.ToString("dd'/'MM'/'yyyy")</p>
+                </div>
+              </div>
+              <div class="calendar-back p-2" @onclick="previousDay">
+                <span class="icon">
+                  <span class="material-icons-outlined is-size-7">
+                    arrow_back_ios
+                  </span>
+                </span>
+              </div>
+              <div class="calendar-forward p-2" @onclick="nextDay">
+                <span class="icon">
+                  <span class="material-icons-outlined is-size-7">
+                    arrow_forward_ios
+                  </span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <table class="table table-todolist">
+          <thead>
+            <tr>
+              <th class="has-text-weight-normal has-text-grey pl-0">Danh sách công việc</th>
+              <th class="has-text-weight-normal has-text-grey" style="width:140px">Phân loại</th>
+              <th class="has-text-weight-normal has-text-grey" style="width:145px">Độ ưu tiên</th>
+              <th class="has-text-weight-normal has-text-grey has-text-centered" style="width:105px">Bắt đầu</th>
+              <th class="has-text-weight-normal has-text-grey has-text-centered" style="width:105px">Kết thúc</th>
+              <th class="has-text-weight-normal has-text-grey has-text-centered pr-0" style="width:100px">Tình trạng
+              </th>
+            </tr>
+          </thead>
+          <tbody id="view-todolist">
+            @foreach (WorkModel work in workList)
+            {
+            if (!idEditList.Contains(work.id))
+            {
+            <tr id="todo_@work.id">
+              <td class="is-vcentered has-text-info-dark has-text-weight-bold pl-0">
+                <p>@work.workName</p>
+              </td>
+              <td class="is-vcentered category-work has-text-weight-bold"
+                style="background-color: @work.category.backgroundColor; color: @work.category.color">
+                @work.category.text</td>
+              <td class="is-vcentered priority-work has-text-weight-bold"
+                style="background-color: @work.priority.backgroundColor; color: @work.priority.color">
+                @work.priority.text</td>
+              <td class="is-vcentered has-text-centered start-time">@work.startTime</td>
+              <td class="is-vcentered has-text-centered end-time">@work.endTime</td>
+              <td class="pr-0 has-text-centered">
+                <div class="dropdown click is-justify-content-center @(workOfDay.isCheckOut ? "" : " is-hoverable")"
+                  style="background-color:@work.status.backgroundColor; color: @work.status.color">
+                  <div class="dropdown-trigger">
+                    <span class="icon-text">
+                      <span class="status-work-value">@work.status.text</span>
+                      @if(!workOfDay.isCheckOut)
+                      {
+                      <span class="material-icons material-symbols-outlined">arrow_drop_down</span>
+                      }
+                    </span>
+                  </div>
+                  <div class="dropdown-menu">
+                    <div class="dropdown-content">
+                      @foreach (TextColorModel statusWork in statusWorkList)
+                      {
+                      <div class="dropdown-item" @onclick="(() => updateStatus(work, statusWork))">@statusWork.text
+                      </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3" class="py-0 pl-0">
+                <div class="mb-2">
+                  @if (work.details != "")
+                  {
+                  <span class="has-text-grey">Chi tiết:</span>
+                  <span class="detail-display">@work.details</span>
+                  }
+                </div>
+
+                <div class="mb-2">
+                  @if (work.result != "")
+                  {
+                  <span class="has-text-grey">Kết quả:</span>
+                  <span class="result-display">@work.result</span>
+                  }
+                </div>
+              </td>
+              <td colspan="3" class="py-0">
+                @if(!workOfDay.isCheckOut)
+                {
+                <div class="control is-flex is-justify-content-flex-end mb-2">
+                  <div class="click edit blue-text mr-2" @onclick="() => showFormEdit(work)">
+                    <span class="icon-text has-text-info-dark">
+                      <span class="icon">
+                        <span class="icon material-icons material-symbols-outlined">edit</span>
+                      </span>
+                      <span>Chỉnh sửa</span>
+                    </span>
+                  </div>
+
+                  <div class="click remove red-text" @onclick="() => delete(work.id, work.workName)">
+                    <span class="icon-text has-text-danger">
+                      <span class="icon">
+                        <span class="icon material-icons material-symbols-outlined">delete</span>
+                      </span>
+                      <span>Xoá</span>
+                    </span>
+                  </div>
+                </div>
+                }
+              </td>
+            </tr>
+            }
+            else
+            {
+            <tr id="todo_@work.id">
+              <td class="is-vcentered has-text-info-dark has-text-weight-bold pl-0">
+                <input class="input is-normal" placeholder="Nhập tên công việc" @bind="work.workName">
+              </td>
+              <td class="is-vcentered category-work">
+                <div class="select-input p-1">
+                  <select @bind="work.category.id">
+                    @foreach (TextColorModel category in categoryList)
+                    {
+                    <option value="@category.id">@category.text</option>
+                    }
+                  </select>
+                </div>
+              </td>
+              <td class="is-vcentered priority-work">
+                <div class="select-input p-1">
+                  <select @bind="work.priority.id">
+                    @foreach (TextColorModel priority in prioriryList)
+                    {
+                    <option value="@priority.id">@priority.text</option>
+                    }
+                  </select>
+                </div>
+
+              </td>
+              <td class="is-vcentered has-text-centered">
+                <div class="select-input p-1">
+                  <select class="start-time-work" @bind="work.startTime">
+                    @foreach (string time in timeList)
+                    {
+                    <option value="@time">@time</option>
+                    }
+                  </select>
+                </div>
+
+              </td>
+              <td class="is-vcentered has-text-centered">
+                <div class="select-input p-1">
+                  <select class="end-time-work" @bind="work.endTime">
+                    @foreach (string time in timeList)
+                    {
+                    <option value="@time">@time</option>
+                    }
+                  </select>
+                </div>
+
+              </td>
+              <td class="pr-0 has-text-centered">
+                <div class="dropdown is-hoverable click is-justify-content-center"
+                  style="background-color:@work.status.backgroundColor; color: @work.status.color">
+                  <div class="dropdown-trigger">
+                    <span class="icon-text">
+                      <span class="status-work-value">@work.status.text</span>
+                      <span class="material-icons material-symbols-outlined">arrow_drop_down</span>
+                    </span>
+                  </div>
+                  <div class="dropdown-menu">
+                    <div class="dropdown-content">
+                      @foreach (TextColorModel statusWork in statusWorkList)
+                      {
+                      <div class="dropdown-item" @onclick="(() => updateStatus(work, statusWork))">
+                        @statusWork.text
+                      </div>
+                      }
+                    </div>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            <tr>
+              <td colspan="3" class="pb-0 pt-3 pl-0 ">
+                <div class="columns is-vcentered mb-0 is-12 m-0">
+                  <span class="column is-one-fifth is-2 p-0">Chi tiết:</span>
+                  <div class="column is-10 p-0">
+                    <textarea class="textarea p-1" placeholder="Nhập chi tiết công việc" rows="1"
+                      @bind="work.details" />
+                    </div>
+                </div>
+                <div class="columns is-vcentered pt-0 is-12 m-0">
+                  <span class="column is-one-fifth is-2 p-0">Kết quả: </span>
+                  <div class="column is-10 px-0">
+                    <textarea class="textarea p-1" placeholder="Nhập chi tiết công việc"
+                      rows="1" @bind="work.result" />
+                  </div>
+                </div>
+              </td>
+              <td colspan="3"  class="pb-0">
+                <div class="control is-flex is-justify-content-flex-end mb-2">
+                  <button class="click edit blue-text showFormEdit mr-2" style="border: none"
+                    @onclick="() => update(work)">
+                    <span class="icon-text has-text-info-dark has-background-white">
+                      <span class="icon">
+                        <span class="icon material-icons material-symbols-outlined">update</span>
+                      </span>
+                      <span>Cập nhật</span>
+                    </span>
+                  </button>
+
+                  <div class="click remove red-text" @onclick="() => delete(work.id, work.workName)">
+                    <span class="icon-text has-text-danger">
+                      <span class="icon">
+                        <span class="icon material-icons material-symbols-outlined">delete</span>
+                      </span>
+                      <span>Xoá</span>
+                    </span>
+                  </div>
+                </div>
+              </td>
+            </tr>
+            }
+            }
+          </tbody>
+        </table>
+        
+        <div class="last-detail-todolist">
+           @if(!workOfDay.isCheckIn) 
+           {       
+              <div class="advice has-text-info-dark">
+                Bạn chưa có công việc cho ngày này. Hãy bắt đầu tạo công việc thôi nào!
+              </div>
+              <div class="control">
+                <div class="click add button-control" @onclick="addFormCreate">
+                  <span class="icon material-icons material-symbols-outlined mr-2">
+                    add
+                  </span>
+                  <span>Thêm công việc</span>
+                </div>
+                @if(workList.Count > 0) 
+              {
+                <div class="click box-shadow check-in button-control" @onclick="checkin">
+                  <span class="icon material-icons material-symbols-outlined mr-2">
+                    logout
+                  </span>
+                  <span class="click">check-in</span>
+                </div>
+              }
+              </div>
+            } 
+            else 
+            {
+              @if(!workOfDay.isCheckOut) 
+              { 
+                @if(@WorkTodoListData.countDoneWork(currentTimeString) != @workOfDay.workList.Count)
+                {
+                  <div class="advice has-text-info-dark">
+                    Tôi biết bạn sẽ làm tốt mà. Hãy hoàn thành thật sớm nhé!
+                  </div>
+                }
+                else
+                {
+                  <div class="advice has-text-info-dark">
+                    Quá tuyệt vời, bạn đã hoàn thành Todolist của hôm nay :)
+                  </div>    
+                }
+                <div class="control">
+                  <div class="click add button-control" @onclick="addFormCreate">
+                    <span class="icon material-icons material-symbols-outlined">
+                      add
+                    </span>
+                    <span>Thêm công việc</span>
+                </div>
+                
+                @if(workOfDay.isCheckIn) 
+                {
+                <div id="check-out" class="click box-shadow check-out button-control" @onclick="checkout">
+                  <span class="icon material-icons material-symbols-outlined">
+                    done
+                  </span>
+                  <span class="click">check-out</span>
+                </div>
+                }
+              </div>
+              }
+              else 
+              {
+                <div class="advice has-text-info-dark">
+                  Đã hoàn thành @WorkTodoListData.countDoneWork(currentTimeString)/@workOfDay.workList.Count công việc.
+                </div>
+              }
+            }
+        </div>     
+      </div>
+
+      <div class="table-history-todolist p-5 mt-4">
+        <ul class="title-history mb-4">
+          <li class="collum name-title">
+            <h1 class="is-size-5 has-text-weight-bold has-text-grey">LỊCH SỬ TODOLIST</h1>
+          </li>
+          <li class="collum">
+            <div class="dropdown is-hoverable click">
+              <div class="dropdown-trigger">
+                <span class="text">Tuần này</span>
+                <span class="icon material-icons material-symbols-outlined">
+                  arrow_drop_down
+                </span>
+              </div>
+              <div class="dropdown-menu">
+                <div class="dropdown-content">
+                  <p class="dropdown-item">Tuần này</p>
+                  <p class="dropdown-item">Tuần trước</p>
+                  <p class="dropdown-item">Tháng này</p>
+                  <p class="dropdown-item">Tháng trước</p>
+                  <p class="dropdown-item">Quý này</p>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+
+        <table class="table">
+          <thead>
+            <tr>
+              <th>Thành viên</th>
+              <th>Ngày check-in</th>
+              <th>Ngày check-out</th>
+              <th>Hoàn thành</th>
+              <th>Trạng thái</th>
+            </tr>
+          </thead>
+          <tbody>
+            
+            <tr class="info-user">
+              <td colspan="5">
+                <div class="user-item">
+                  <span class="icon-text is-align-items-center">
+                    <span class="icon image is-32x32">
+                      <img class="is-rounded" src="https://avatars.dicebear.com/api/adventurer-neutral/231441AAFA.svg">
+                    </span>
+                    <div class="pl-3">
+                      <p>Lương Thanh ThắNg</p>
+                      <p>DOCORP / CONANDO / Team Dev</p>
+                    </div>
+                  </span>
+                </div>
+              </td>
+            </tr>
+            @foreach(WorkOfDayModel workOfDayModel in workListData)
+                { 
+                  @if(workOfDayModel.isCheckIn)
+                  {
+                  <tr>
+                    <td>
+                      <div class="day" style="padding-left: 48px;">
+                        <span class="icon-text has-text-info-dark has-text-weight-bold" style="align-items: baseline;">
+                          <span>@workOfDayModel.dateWork</span>
+                          <span
+                            class="load-more click icon material-icons material-symbols-outlined is-size-7" @onclick="() => showWorkList(workOfDayModel)">play_arrow</span>
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      @if(workOfDayModel.dateCheckIn != 0)
+                      {
+                      <span>@(new DateTime(workOfDayModel.dateCheckIn).ToString("dd'/'MM")) - @(new DateTime(workOfDayModel.dateCheckIn).ToString("hh:mm"))</span>
+
+                        @if(workOfDayModel.dateCheckIn < ((DateTime.Parse(workOfDayModel.dateWork).AddDays(-1) + new TimeSpan(0, 23, 30, 0)).Ticks)) 
+                        {
+                          <span class="ml-2 has-text-success">Đúng hạn</span>
+                        }
+                        else
+                        {
+                          <span class="ml-2 has-text-danger">Trễ hạn</span>
+                        }
+                      } 
+                      else {
+                      <span>Chưa check-in</span>
+                      }
+                    </td>
+
+                    @if(workOfDayModel.dateCheckIn != 0)
+                      {
+                        <td>
+                          @if(workOfDayModel.dateCheckOut != 0)
+                          {
+                          <span>@(new DateTime(workOfDayModel.dateCheckOut).ToString("dd'/'MM")) - @(new DateTime(workOfDayModel.dateCheckOut).ToString("hh:mm"))</span>
+                            @if(workOfDayModel.dateCheckOut < ((DateTime.Parse(workOfDayModel.dateWork) + new TimeSpan(0, 23, 30, 0)).Ticks)) 
+                            {
+                              <span class="ml-2 has-text-success">Đúng hạn</span>
+                            }
+                            else
+                            {
+                              <span class="ml-2 has-text-danger">Trễ hạn</span>
+                            }
+                          } 
+                          else {
+                          <span>Chưa check-out</span>
+                          }
+                        </td>
+
+                        <td>
+                          <span class="has-text-weight-medium">@WorkTodoListData.countDoneWork(workOfDayModel.dateWork)/@workOfDayModel.workList.Count 
+                            - @((Convert.ToDouble((WorkTodoListData.countDoneWork(workOfDayModel.dateWork)) / Convert.ToDouble(workOfDayModel.workList.Count)) * 100).ToString("0.##"))%</span>  
+                        </td>
+                        <td>
+                          @if(workOfDayModel.isConfirm)
+                          {
+                          <span class="has-text-weight-medium">Đã xác nhận</span>
+                          }
+                          else
+                          {
+                          <span class="has-text-weight-medium has-text-grey">Chờ xác nhận</span>
+                          }
+                        </td>
+                      }
+                  </tr>
+
+                @if(workOfDayModel.isActive)
+                {
+                  @foreach(WorkModel work in workOfDayModel.workList)
+                  {
+                  <tr>
+                    <td class="pl-6">
+                      <span class="pl-5">• @work.workName</span>
+                    </td>
+                    <td>Phân loại: <span style="color: @work.category.color">@work.category.text</span></td>
+                    <td>Ưu tiên: <span style="color: @work.priority.color">@work.priority.text</span></td>
+                    <td>@work.startTime - @work.endTime</td>
+                    <td><span>@work.status.text</span></td>
+                  </tr>
+                  }
+                }
+              }
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+@code {
+    //[Inject]
+    //public NavigationManager NavigationManager { get; set; }
+    //[Parameter]
+    //public string? currentDate {get; set;}
+    private DateTime currentTime = DateTime.Now;
+    private string currentTimeString = "";
+    private List<string> idEditList = new();
+    private List<WorkOfDayModel> workListData = new List<WorkOfDayModel>();
+    private WorkOfDayModel workOfDay = new();
+    private List<WorkModel> workList = new List<WorkModel>();
+    private List<TextColorModel> statusWorkList = StatusTodoListData.findAllStatusWork();
+    private List<TextColorModel> categoryList = StatusTodoListData.findAllCategory();
+    private List<TextColorModel> prioriryList = StatusTodoListData.findAllPriority();
+    private List<string> timeList = TimeArray.createTimeArray("7:00", "23:00", 10);
+
+    private string dateWork = "";
+
+    private void getListFilter(string date) {
+      workList = WorkTodoListData.sortListByTime(workList);
+    }
+    protected override void OnInitialized()
+        {
+          currentTimeString = currentTime.ToString("dd/MM/yyyy");
+          workOfDay = WorkTodoListData.findWorkByDay(currentTimeString);
+          workList = WorkTodoListData.findAllWorkOfDayFilter(workOfDay.workList);
+          workListData = WorkTodoListData.WorkOfDayList;
+          idEditList.Clear();
+        }
+
+    private void nextDay() {
+     currentTime = currentTime.AddDays(1);
+     currentTimeString = currentTime.ToString("dd/MM/yyyy");
+     WorkOfDayModel workOfDayTemp = WorkTodoListData.findWorkByDay(currentTimeString);
+     if(!workListData.Contains(workOfDayTemp)) {
+      // tạo ngày mới
+      WorkOfDayModel workOfNewDay = new();
+      workOfNewDay.id = "Thang" + "-" + DateTime.Now.Ticks;
+      workOfNewDay.dateWork = currentTimeString;
+      workOfNewDay.workList = new();
+      workListData.Add(workOfNewDay);
+     } 
+     OnInitialized();
+     //NavigationManager.NavigateTo("/todolist/" + currentTime.ToString("dd-MM-yyyy"));
+    }
+
+    private void previousDay() {
+     currentTime = currentTime.AddDays(-1);
+     currentTimeString = currentTime.ToString("dd/MM/yyyy");
+     WorkOfDayModel workOfDayTemp = WorkTodoListData.findWorkByDay(currentTimeString);
+     if(!workListData.Contains(workOfDayTemp)) {
+      // tạo ngày mới
+      WorkOfDayModel workOfNewDay = new();
+      workOfNewDay.id = "Thang" + "-" + DateTime.Now.Ticks;
+      workOfNewDay.dateWork = currentTimeString;
+      workOfNewDay.workList = new();
+      workListData.Add(workOfNewDay);
+     }
+     OnInitialized();
+    }
+
+    private void addFormCreate() {
+      WorkModel work = new WorkModel();
+      work.status = statusWorkList.ElementAt(0);
+      idEditList.Add(work.id);
+      work.category.id = 1;
+      work.priority.id = 1;
+      if(workOfDay.workList.Count == 0) {
+         work.startTime = "08:30";
+         work.endTime = "12:00";
+      } else {
+        work.startTime = "11:30";
+        work.endTime = "12:30";
+      }
+      workList.Add(work);
+    }
+
+    private void updateStatus(WorkModel workUpdate, TextColorModel status) {
+      if(WorkTodoListData.findAllWorkOfDay(currentTimeString).Contains(workUpdate)) 
+      {
+      workUpdate.status = status;
+      WorkTodoListData.updateWork(currentTimeString, workUpdate);
+      } 
+      else 
+      {
+        workUpdate.status = status;
+      }
+    }
+
+    private void showFormEdit(WorkModel workUpdate) {
+      idEditList.Add(workUpdate.id);
+    }
+  private void update(WorkModel workUpdate) {
+      if(workUpdate.workName == "") 
+      {
+           JsRuntime.InvokeVoidAsync("alert", "Bạn chưa nhập tên công việc!"); 
+      } 
+      else
+      {
+        workUpdate.category = categoryList.First(category => workUpdate.category.id == category.id);
+        workUpdate.priority = prioriryList.First(priority => workUpdate.priority.id == priority.id);
+
+        if(WorkTodoListData.findAllWorkOfDay(currentTime.ToString("dd/MM/yyyy")).Contains(workUpdate))
+        {
+          WorkTodoListData.updateWork(currentTime.ToString("dd/MM/yyyy"), workUpdate);
+        } 
+        else 
+        {
+          WorkTodoListData.createWorkOfDay(workUpdate, currentTimeString);
+        }
+
+       categoryList = StatusTodoListData.findAllCategory();
+       prioriryList = StatusTodoListData.findAllPriority();
+       idEditList.Remove(workUpdate.id);
+       getListFilter(currentTimeString);
+    }
+  }
+
+  private async Task delete(string id, string workName) {
+    bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Bạn có chắc muốn xóa: " + workName + "?");
+    if(confirm) {
+    WorkTodoListData.deleteWorkById(currentTimeString, id);
+    workList.RemoveAll(item => item.id == id);
+    }
+  }
+
+  private async Task checkout() {
+    workList.RemoveAll(work => work.workName == "");
+    if(workList.Where(work => work.status.id == 1 || work.status.id == 3).ToList().Count > 0) 
+    {
+      await JsRuntime.InvokeVoidAsync("alert", "Không thể check-out khi có công việc đang ở trạng thái Todo, Doing!!"); 
+    } 
+    else
+    {
+      bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Xác nhận checkout !!!");
+      if(confirm) 
+      {
+      workOfDay.isCheckOut = true;
+      workOfDay.isConfirm = true;
+      workOfDay.dateCheckOut = DateTime.Now.Ticks;
+      idEditList.Clear();
+      workList.ForEach((work => update(work)));
+      }
+    }
+  }
+
+  private async Task checkin() {
+    bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Xác nhận checkin !!!");
+      if(confirm) 
+      {
+        workList.ForEach((work => update(work)));
+        workList.RemoveAll(work => work.workName == "");
+        if(workList.Count() != 0) { 
+        workOfDay.isCheckIn = true;
+        workOfDay.dateCheckIn = DateTime.Now.Ticks;
+        }
+      }
+  }
+
+  private void showWorkList(WorkOfDayModel workCheckActive) {
+    workCheckActive.isActive = !workCheckActive.isActive;
+  }
+}

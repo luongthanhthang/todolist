@@ -27,3 +27,17 @@ D:\conando\blazor\WorkDo1\obj\Debug\net6.0\refint\WorkDo1.dll
 D:\conando\blazor\WorkDo1\obj\Debug\net6.0\WorkDo1.pdb
 D:\conando\blazor\WorkDo1\obj\Debug\net6.0\WorkDo1.genruntimeconfig.cache
 D:\conando\blazor\WorkDo1\obj\Debug\net6.0\ref\WorkDo1.dll
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\AWSSDK.Core.dll
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\AWSSDK.SecurityToken.dll
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\DnsClient.dll
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\MongoDB.Bson.dll
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\MongoDB.Driver.dll
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\MongoDB.Driver.Core.dll
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\MongoDB.Libmongocrypt.dll
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\SharpCompress.dll
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\Snappier.dll
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\ZstdSharp.dll
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\runtimes\linux\native\libmongocrypt.so
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\runtimes\osx\native\libmongocrypt.dylib
+D:\conando\blazor\WorkDo1\bin\Debug\net6.0\runtimes\win\native\mongocrypt.dll
+D:\conando\blazor\WorkDo1\obj\Debug\net6.0\WorkDo1.csproj.CopyComplete

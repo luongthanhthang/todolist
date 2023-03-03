@@ -28,16 +28,16 @@ table {
   width: 100%;
 }
 
+html {
+  overflow-y: auto !important;
+}
+
 .has-font-13 {
   font-size: 13px !important;
 }
 
 .click {
   cursor: pointer !important;
-}
-
-.is-active {
-  display: block !important;
 }
 
 .is-none {
@@ -48,9 +48,9 @@ table {
   padding: 1rem 0 3rem;
   width: 200px;
   background-color: #585c7d;
-  position: fixed;
+  position: sticky;
+  top: 0;
   height: 100vh;
-  transition: all 0.1s;
   z-index: 2;
   /* width */
   /* Track */
@@ -71,7 +71,6 @@ table {
 }
 #sidebar .scroll-y {
   overflow-y: auto;
-  overflow-x: hidden;
   max-height: calc(100vh - 120px);
 }
 #sidebar .scroll-y a {
@@ -84,6 +83,31 @@ table {
   background-color: #60688e;
 }
 #sidebar .quarter-calendar:hover .sub-menu-top {
+  display: block;
+}
+#sidebar ul ul li {
+  display: none;
+}
+#sidebar ul ul ul li {
+  display: none;
+}
+#sidebar .is-active > a {
+  width: 100%;
+  border-radius: 5px;
+  background-color: #60688e;
+}
+#sidebar .is-active ul li {
+  display: block;
+}
+#sidebar .is-active ul li ul li {
+  display: none;
+}
+#sidebar .is-active .is-active > a {
+  width: 100%;
+  border-radius: 5px;
+  background-color: #60688e;
+}
+#sidebar .is-active .is-active ul li {
   display: block;
 }
 #sidebar li {
@@ -124,42 +148,77 @@ table {
 .sidebar-small {
   width: 60px !important;
 }
+.sidebar-small .icon {
+  margin: 0 !important;
+}
+.sidebar-small .scroll-y {
+  overflow: unset !important;
+}
 .sidebar-small .quarter-calendar,
-.sidebar-small .icon-arrow {
+.sidebar-small .icon-parent {
   display: none;
 }
-.sidebar-small li .link-name {
+.sidebar-small a {
+  justify-content: center !important;
+}
+.sidebar-small .sub-sub-menu,
+.sidebar-small .sub-menu {
+  display: none;
+}
+.sidebar-small .main-item {
+  position: relative;
+}
+.sidebar-small .main-item .link-name {
   position: absolute;
   white-space: nowrap;
   left: 3.75rem;
-  top: 10px;
   padding: 5px 16px;
   border-radius: 5px;
-  background-color: #355caa;
   color: white;
   font-weight: 600;
   z-index: 20;
   display: none;
 }
-.sidebar-small li:hover .link-name {
-  display: inline;
-  top: 2px;
+.sidebar-small .main-item:hover .link-name {
+  display: block;
+  background-color: #355caa;
+}
+.sidebar-small .main-item:hover .sub-menu {
+  display: block !important;
+  white-space: nowrap;
+  position: absolute;
+  left: 100%;
+  border-radius: 0px 7px 7px 0px;
+  padding: 45px 10px 10px 10px;
+  color: white;
+  top: -10px;
+  font-weight: 400;
+  background-color: #585c7d !important;
+}
+.sidebar-small .main-item:hover .sub-menu .icon {
+  display: none;
+}
+.sidebar-small .main-item:hover .sub-menu a {
+  flex-wrap: nowrap;
+  justify-content: start !important;
+}
+.sidebar-small .main-item:hover .is-active .sub-sub-menu {
+  display: block !important;
+}
+.sidebar-small .main-item:hover li {
+  display: block !important;
+}
+.sidebar-small .sign-out .link-name {
+  display: none;
 }
 
-#content {
-  padding-left: 200px;
-}
 #content .main-header {
   background-color: #fff;
-  padding: 16px;
-  padding-left: 200px;
+  padding: 16px 0;
   border-bottom: 1px solid #e2e2e2;
   position: sticky;
   top: 0;
   z-index: 1;
-}
-#content .todo-list {
-  padding-left: 200px;
 }
 #content .todo-list .team-left {
   width: 210px;

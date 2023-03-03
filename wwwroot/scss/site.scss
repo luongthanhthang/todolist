@@ -35,6 +35,9 @@ table {
   width: 100%;
 }
 
+html {
+  overflow-y: auto !important;
+}
 .has-font-13 {
   font-size: 13px !important;
 }
@@ -43,9 +46,9 @@ table {
   cursor: pointer !important;
 }
 
-.is-active {
-  display: block !important;
-}
+// .is-active {
+//   display: block !important;
+// }
 
 .is-none {
   display: none;
@@ -55,9 +58,9 @@ table {
   padding: 1rem 0 3rem;
   width: 200px;
   background-color: #585c7d;
-  position: fixed;
+  position: sticky;
+  top: 0;
   height: 100vh;
-  transition: all 0.1s;
   z-index: 2;
 
   /* width */
@@ -82,8 +85,7 @@ table {
 
   .scroll-y {
     overflow-y: auto;
-    overflow-x: hidden;
-    
+
     max-height: calc(100vh - 120px);
     a {
       justify-content: space-between;
@@ -99,6 +101,50 @@ table {
   .quarter-calendar:hover {
     .sub-menu-top {
       display: block;
+    }
+  }
+
+  ul {
+    ul {
+      li {
+        display: none;
+      }
+      ul {
+        li {
+          display: none;
+        }
+      }
+    }
+  }
+
+  .is-active {
+    > a {
+      width: 100%;
+      border-radius: 5px;
+      background-color: #60688e;
+    }
+    ul {
+      li {
+        display: block;
+        ul {
+          li {
+            display: none;
+          }
+        }
+      }
+    }
+
+    .is-active {
+      > a {
+        width: 100%;
+        border-radius: 5px;
+        background-color: #60688e;
+      }
+      ul {
+        li {
+          display: block;
+        }
+      }
     }
   }
 
@@ -143,20 +189,36 @@ table {
 
 .sidebar-small {
   width: 60px !important;
+  .icon {
+    margin: 0 !important;
+  }
+
+  .scroll-y {
+    overflow: unset !important;
+  }
 
   .quarter-calendar,
-  .icon-arrow {
+  .icon-parent {
     display: none;
   }
-  li {
+
+  a {
+    justify-content: center !important;
+  }
+
+  .sub-sub-menu,
+  .sub-menu {
+    display: none;
+  }
+
+  .main-item {
+    position: relative;
     .link-name {
       position: absolute;
       white-space: nowrap;
       left: 3.75rem;
-      top: 10px;
       padding: 5px 16px;
       border-radius: 5px;
-      background-color: #355caa;
       color: white;
       font-weight: 600;
       z-index: 20;
@@ -165,20 +227,50 @@ table {
 
     &:hover {
       .link-name {
-        display: inline;
-        top: 2px;
+        display: block;
+        background-color: #355caa;
       }
+      .sub-menu {
+        display: block !important;
+        white-space: nowrap;
+        position: absolute;
+        left: 100%;
+        border-radius: 0px 7px 7px 0px;
+        padding: 45px 10px 10px 10px;
+        color: white;
+        top: -10px;
+        font-weight: 400;
+        background-color: variables.$backgroundSidebar !important;
+        .icon {
+          display: none;
+        }
+        a {
+          flex-wrap: nowrap;
+          justify-content: start !important;
+        }
+      }
+      .is-active {
+        .sub-sub-menu {
+          display: block !important;
+        }
+      }
+      
+      li {
+        display: block !important;
+      }
+    }
+  }
+  .sign-out {
+    .link-name {
+      display: none;
     }
   }
 }
 
 #content {
-  padding-left: 200px;
-
   .main-header {
     background-color: variables.$backgroundContent;
-    padding: 16px;
-    padding-left: 200px;
+    padding: 16px 0;
     border-bottom: 1px solid variables.$borderColor;
     position: sticky;
     top: 0;
@@ -186,8 +278,6 @@ table {
   }
 
   .todo-list {
-    padding-left: 200px;
-
     .team-left {
       width: 210px;
       position: sticky;

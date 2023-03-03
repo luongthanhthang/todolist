@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using WorkDo1.Models;
 using WorkDo1.Helpers;
-
+using MongoDB.Driver;
 namespace WorkDo1.Data;
 
 public class WorkTodoListData
@@ -29,7 +29,7 @@ public class WorkTodoListData
                     {
                         new()
                         {
-                            id = 638125882439019711,
+                            id = "638125882439019711",
                             workName = "Test",
                             category = StatusTodoListData
                                 .findAllCategory()
@@ -47,7 +47,7 @@ public class WorkTodoListData
                         },
                         new()
                         {
-                            id = 638125899095715888,
+                            id = "638125899095715888",
                             workName = "Test2",
                             category = StatusTodoListData
                                 .findAllCategory()
@@ -64,7 +64,7 @@ public class WorkTodoListData
                         },
                         new()
                         {
-                            id = 638125901709548520,
+                            id = "638125901709548520",
                             workName = "Test3",
                             category = StatusTodoListData
                                 .findAllCategory()
@@ -85,51 +85,6 @@ public class WorkTodoListData
             }
         };
     public static List<WorkOfDayModel> WorkOfDayList = userData.workOfDayList;
-
-    // public static List<WorkOfDayModel> findAll()
-    // {
-    //   return new List<WorkOfDayModel>(){
-    //       new(){
-    //         Id = "Thang" + "-" + DateTime.Now.Ticks,
-    //         Username = "Thang",
-    //         DateWork = "23-02-2023",
-    //         WorkList =  new List<WorkModel>(){
-    //           new(){
-    //             Id = 638125882439019711,
-    //             WorkName = "Test",
-    //             Category = StatusTodoListData.findAllCategory().First(category => category.Id == 2),
-    //             Priority = StatusTodoListData.findAllPriority().First(priorty => priorty.Id == 1),
-    //             Details = "test detail",
-    //             StartTime = "7:00",
-    //             EndTime = "12:00",
-    //             Result = "test result",
-    //             Status = StatusTodoListData.findAllStatusWork().First(status => status.Id == 1)
-    //           },
-    //            new(){
-    //             Id = 638125899095715888,
-    //             WorkName = "Test2",
-    //             Category = StatusTodoListData.findAllCategory().First(category => category.Id == 1),
-    //             Priority = StatusTodoListData.findAllPriority().First(priorty => priorty.Id == 2),
-    //             Details = "test detail2",
-    //             StartTime = "13:00",
-    //             EndTime = "15:00",
-    //             Status = StatusTodoListData.findAllStatusWork().First(status => status.Id == 3)
-    //           },
-    //            new(){
-    //             Id = 638125901709548520,
-    //             WorkName = "Test3",
-    //             Category = StatusTodoListData.findAllCategory().First(category => category.Id == 1),
-    //             Priority = StatusTodoListData.findAllPriority().First(priorty => priorty.Id == 2),
-    //             Details = "test detail3",
-    //             StartTime = "15:00",
-    //             EndTime = "17:30",
-    //             Result = "test result3",
-    //             Status = StatusTodoListData.findAllStatusWork().First(status => status.Id == 3)
-    //           }
-    //         }
-    //       }
-    //     };
-    // }
 
     // xuất công việc của ngày tổng
     public static WorkOfDayModel findWorkByDay(string workDate)
@@ -178,7 +133,7 @@ public class WorkTodoListData
         workOfDayModel.workList.Add(work);
     }
 
-    public static WorkModel findWorkById(long id, string workDate)
+    public static WorkModel findWorkById(string id, string workDate)
     {
         WorkModel workTemp = new();
         WorkTodoListData
@@ -202,7 +157,7 @@ public class WorkTodoListData
         WorkTodoListData.findAllWorkOfDay(workDate)[Index] = workUpdate;
     }
 
-    public static void deleteWorkById(string workDate, long id)
+    public static void deleteWorkById(string workDate, string id)
     {
         WorkTodoListData.findAllWorkOfDay(workDate).RemoveAll(item => item.id == id);
     }

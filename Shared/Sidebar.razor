@@ -1,9 +1,9 @@
 @inject ProtectedLocalStorage ProtectedLocalStore
 @inject NavigationManager navigation
 
-<section class="@(isSmall ? "sidebar-small" : "")" id="sidebar">
-  <div class="columns is-vcentered is-gapless px-2 mb-0 logo-details">
-    <a class="column is-narrow icon-menu" @onclick="NavToggle">
+<section class="@(isSmall ? " sidebar-small" : "" )" id="sidebar">
+  <div class="columns is-vcentered is-gapless px-2 mb-0 logo-details is-justify-content-center">
+    <a class="column is-narrow icon-menu" @onclick="ToggleSidebar">
       <span class="material-icons-outlined has-text-white p-2 click">menu</span>
     </a>
     <div class="column has-text-right has-text-white quarter-calendar">
@@ -34,55 +34,83 @@
     <ul class="px-2 mt-4">
       @foreach (SidebarModel navItem in sidebarList)
       {
-      <li class="click mb-2">
-        <a href = "@navItem.url" class="px-1 py-1 icon-text has-text-white is-align-items-center is-justify-content-space-between">
-          <div href = "@navItem.url" class="is-flex is-align-items-center">
-            <span class="icon">
-              <span class="material-icons-outlined is-size-6">@navItem.icon</span>
-            </span>
-            <span class="has-text-weight-medium link-name">@navItem.name</span>
-          </div>
-          <span class="material-icons-outlined is-size-6 icon-arrow">@(navItem.subMenu != null ? "arrow_right" : "")</span>
-        </a>
+        <li class="main-item click mb-2 @(navItem.isActive ? "is-active" : "" )">
         @if(navItem.subMenu != null)
         {
-        <ul>
-        @foreach (SidebarModel navSubItem in navItem.subMenu)
-        {
-          <li class="click pl-2">
-            <a href = "@navSubItem.url" class="px-1 py-1 icon-text has-text-white is-align-items-center">
-              <div class="is-flex is-align-items-center">
-                <span class="icon">
-                  <span class="material-icons-outlined is-size-6">@navSubItem.icon</span>
-                </span>
-                <span class="has-text-weight-medium link-name">@navSubItem.name</span>
-              </div>
-              <span class="material-icons-outlined is-size-6 icon-arrow">@(navSubItem.subMenu != null ? "arrow_right" : "")</span>
-            </a>
-          @if(navSubItem.subMenu != null)
-          {
-            <ul>
-            @foreach (var navSubSubItem in navSubItem.subMenu)
+          <a @onclick="() => navItem.isActive = !navItem.isActive"
+            class="px-1 py-1 icon-text has-text-white is-align-items-center">
+            <div class="is-flex is-align-items-center">
+              <span class="icon">
+                <span class="material-icons-outlined is-size-6">@navItem.icon</span>
+              </span>
+              <span class="has-text-weight-medium link-name">@navItem.name</span>
+            </div>
+            <span class="material-icons-outlined is-size-6 icon-arrow icon-parent ml-2">@(!navItem.isActive ? "arrow_right" : "arrow_drop_down")</span>
+          </a>
+
+          <ul class="my-1 sub-menu">
+            @foreach (SidebarModel navSubItem in navItem.subMenu)
             {
-              <li class="click">
-                <a href = "@navSubSubItem.url" class="px-1 py-1 icon-text has-text-white is-align-items-center is-justify-content-space-between">
+              <li class="click my-1 pl-2 @(navSubItem.isActive ? " is-active" : "" )">
+              @if(navSubItem.subMenu != null)
+              {
+                <a @onclick="() => navSubItem.isActive = !navSubItem.isActive"
+                  class="px-1 py-1 icon-text has-text-white is-align-items-center">
                   <div class="is-flex is-align-items-center">
                     <span class="icon">
-                      <span class="material-icons-outlined is-size-6">@navSubSubItem.icon</span>
+                      <span class="material-icons-outlined is-size-6">@navSubItem.icon</span>
                     </span>
-                    <span class="has-text-weight-medium link-name">@navSubSubItem.name</span>
+                    <span class="has-text-weight-medium">@navSubItem.name</span>
                   </div>
-                  <span class="material-icons-outlined is-size-6 icon-arrow">@(navSubSubItem.subMenu != null ? "arrow_right" : "")</span>
+                  <span class="material-icons-outlined is-size-6 icon-arrow ml-2">@(!navSubItem.isActive ? "arrow_right" : "arrow_drop_down")</span>
                 </a>
+                <ul class="my-1 sub-sub-menu">
+                  @foreach (var navSubSubItem in navSubItem.subMenu)
+                  {
+                  <li class="click @(navSubSubItem.isActive ? " is-active" : "" )"
+                    @onclick="() => navSubSubItem.isActive = !navSubSubItem.isActive">
+                    <a href="@navSubSubItem.url"
+                      class="px-1 py-1 icon-text has-text-white is-align-items-center">
+                      <div class="is-flex is-align-items-center">
+                        <span class="icon">
+                          <span class="material-icons-outlined is-size-6">@navSubSubItem.icon</span>
+                        </span>
+                        <span class="has-text-weight-medium">@navSubSubItem.name</span>
+                      </div>
+                    </a>
+                  </li>
+                  }
+                </ul>
+              } 
+              else
+              {
+                <a href="@navSubItem.url"
+                  class="px-1 py-1 icon-text has-text-white is-align-items-center">
+                  <div class="is-flex is-align-items-center">
+                    <span class="icon">
+                      <span class="material-icons-outlined is-size-6">@navSubItem.icon</span>
+                    </span>
+                    <span class="has-text-weight-medium">@navSubItem.name</span>
+                  </div>
+                </a>
+              } 
               </li>
             }
-            </ul>
-          }
-          </li>
+          </ul>
         }
-        </ul>
+        else
+        {
+          <a href="@navItem.url"
+            class="px-1 py-1 icon-text has-text-white is-align-items-center">
+            <div class="is-flex is-align-items-center">
+              <span class="icon">
+                <span class="material-icons-outlined is-size-6">@navItem.icon</span>
+              </span>
+              <span class="has-text-weight-medium link-name">@navItem.name</span>
+            </div>
+          </a>
         }
-      </li>
+        </li>
       }
     </ul>
     <div class="click sign-out">
@@ -101,25 +129,49 @@
 @code{
     private List<SidebarModel> sidebarList = new();
     private bool isSmall = false;
-
+    [CascadingParameter]
+    public MainLayout? mainLayout {get; set;}
     protected override void OnInitialized()
     {
       getSidebarList();
+    }
+
+    protected override void OnParametersSet()
+    {
+      var url = navigation.Uri.Replace(navigation.BaseUri, ""); //chỉ lấy phần vd: /okr
+      foreach (var item in sidebarList) 
+      {
+        item.isActive = url.StartsWith(item.url.Replace("#", ""));
+        if(item.subMenu != null) 
+        {
+          foreach(var subItem in item.subMenu) 
+          {
+            subItem.isActive = url.StartsWith(subItem.url.Replace("#", ""));
+            if(subItem.subMenu != null) 
+            {
+              foreach(var subSubItem in subItem.subMenu) 
+              {
+                subSubItem.isActive = url.StartsWith(subSubItem.url.Replace("#", ""));
+              }
+            }
+          }
+        }
+      }
     }
     protected override async Task OnAfterRenderAsync(bool firstRender)
     {
         if (firstRender)
         {
-            var result = await ProtectedLocalStore.GetAsync<bool>("nav");
+            var result = await ProtectedLocalStore.GetAsync<bool>("sidebar");
             isSmall = result.Success ? result.Value : false;
-            StateHasChanged();
+            StateHasChanged(); // thông báo component thay đổi và render lại *@
         }
     }
 
-    private async Task NavToggle()
+    private async Task ToggleSidebar()
     {
         isSmall = !isSmall;
-        await ProtectedLocalStore.SetAsync("nav", isSmall);
+        await ProtectedLocalStore.SetAsync("sidebar", isSmall);
     }
 
   private void getSidebarList() {

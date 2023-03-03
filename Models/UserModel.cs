@@ -9,8 +9,7 @@ namespace WorkDo1.Models;
 
 public class UserModel
 {
-    [BsonRepresentation(BsonType.ObjectId)]
-    public string id { get; set; } = MongoDB.Bson.ObjectId.GenerateNewId().ToString();
+    public string id { get; set; } = "";
     public string name { get; set; } = "";
     public string avatar { get; set;} = "";
     public string team { get; set; } = "";

@@ -1,13 +1,10 @@
-@inject IJSRuntime JsRuntime
 @page "/todolist"
+
+@inject IJSRuntime JsRuntime
 @* @page "/todolist/{currentDate?}" *@
 
-<section class="todo-list columns is-gapless py-1">
-  <div class="column is-narrow p-0">
-    <div class="py-3 team-left py-3"></div>
-  </div>
-
-  <div class="column mx-4" style="width: calc(100% - 210px);">
+<section class="todo-list py-1">
+  <div class="mx-4">
     <div class="content-right">
       <div class="content-top p-5">
         <ul class="columns is-vcentered">
@@ -48,6 +45,13 @@
       <div class="py-4 has-text-grey has-text-centered">
         <p class="is-italic">"Sống phải có đam mê, tôi chưa thấy ai thành công mà không có đam mê của riêng mình."
           — Donald Trump</p>
+      </div>
+
+      <div class="columns is-gapless is-align-items-center is-justify-content-space-between">
+        <p class="has-text-weight-bold is-size-4 has-text-info-dark">Chào buổi sáng, Lương Thanh Thắng</p>
+        <p class="has-text-weight-bold is-size-6">Bạn đang có
+          <span class="has-text-danger">@countTheDay()</span>
+          ngày liên tiếp không trễ Todolist</p>
       </div>
 
       <div class="main-content p-5">
@@ -132,7 +136,7 @@
                     <div class="dropdown-content">
                       @foreach (TextColorModel statusWork in statusWorkList)
                       {
-                      <div class="dropdown-item" @onclick="(() => updateStatus(work, statusWork))">@statusWork.text
+                      <div class="dropdown-item" @onclick="(() => updateStatusAsync(work, statusWork))">@statusWork.text
                       </div>
                       }
                     </div>
@@ -246,7 +250,7 @@
                     <div class="dropdown-content">
                       @foreach (TextColorModel statusWork in statusWorkList)
                       {
-                      <div class="dropdown-item" @onclick="(() => updateStatus(work, statusWork))">
+                      <div class="dropdown-item" @onclick="(() => updateStatusAsync(work, statusWork))">
                         @statusWork.text
                       </div>
                       }
@@ -275,7 +279,7 @@
               <td colspan="3"  class="pb-0">
                 <div class="control is-flex is-justify-content-flex-end mb-2">
                   <button class="click edit blue-text showFormEdit mr-2" style="border: none"
-                    @onclick="() => update(work)">
+                    @onclick="() => updateAsync(work)">
                     <span class="icon-text has-text-info-dark has-background-white">
                       <span class="icon">
                         <span class="icon material-icons material-symbols-outlined">update</span>
@@ -302,10 +306,20 @@
         
         <div class="last-detail-todolist">
            @if(!workOfDay.isCheckIn) 
-           {       
+           {    
+              @if(workList.Count <= 0) 
+              {   
               <div class="advice has-text-info-dark">
                 Bạn chưa có công việc cho ngày này. Hãy bắt đầu tạo công việc thôi nào!
               </div>
+              }
+              else
+              {
+              <div class="advice has-text-info-dark">
+                Tôi biết bạn sẽ làm tốt mà. Hãy hoàn thành thật sớm nhé!
+              </div>
+              }
+              
               <div class="control">
                 <div class="click add button-control" @onclick="addFormCreate">
                   <span class="icon material-icons material-symbols-outlined mr-2">
@@ -314,21 +328,21 @@
                   <span>Thêm công việc</span>
                 </div>
                 @if(workList.Count > 0) 
-              {
-                <div class="click box-shadow check-in button-control" @onclick="checkin">
-                  <span class="icon material-icons material-symbols-outlined mr-2">
-                    logout
-                  </span>
-                  <span class="click">check-in</span>
-                </div>
-              }
+                {
+                  <div class="click box-shadow check-in button-control" @onclick="checkin">
+                    <span class="icon material-icons material-symbols-outlined mr-2">
+                      logout
+                    </span>
+                    <span class="click">check-in</span>
+                  </div>
+                }
               </div>
             } 
             else 
             {
               @if(!workOfDay.isCheckOut) 
               { 
-                @if(@WorkTodoListData.countDoneWork(currentTimeString) != @workOfDay.workList.Count)
+                @if(@data.countDoneWork(workOfDay, currentTimeString) != @workOfDay.workList.Count)
                 {
                   <div class="advice has-text-info-dark">
                     Tôi biết bạn sẽ làm tốt mà. Hãy hoàn thành thật sớm nhé!
@@ -350,7 +364,7 @@
                 
                 @if(workOfDay.isCheckIn) 
                 {
-                <div id="check-out" class="click box-shadow check-out button-control" @onclick="checkout">
+                <div data-target="modal-js-example" id="check-out" class="js-modal-trigger click box-shadow check-out button-control">
                   <span class="icon material-icons material-symbols-outlined">
                     done
                   </span>
@@ -362,7 +376,7 @@
               else 
               {
                 <div class="advice has-text-info-dark">
-                  Đã hoàn thành @WorkTodoListData.countDoneWork(currentTimeString)/@workOfDay.workList.Count công việc.
+                  Đã hoàn thành @data.countDoneWork(workOfDay, currentTimeString)/@workOfDay.workList.Count công việc.
                 </div>
               }
             }
@@ -412,27 +426,48 @@
                 <div class="user-item">
                   <span class="icon-text is-align-items-center">
                     <span class="icon image is-32x32">
-                      <img class="is-rounded" src="@WorkTodoListData.userData.avatar">
+                      <img class="is-rounded" src="https://avatars.dicebear.com/api/adventurer-neutral/231441AAFA.svg">
                     </span>
                     <div class="pl-3">
-                      <p>@WorkTodoListData.userData.name</p>
-                      <p>@WorkTodoListData.userData.team</p>
+                      <p>Lương Thanh Thắng</p>
+                      <p>DOCORP / CONANDO / Team Dev</p>
                     </div>
                   </span>
                 </div>
               </td>
             </tr>
-            @foreach(WorkOfDayModel workOfDayModel in workListData)
-                { 
+            @foreach(WorkOfDayModel workOfDayModel in workOfDayHistoryList)
+                {
+                  @if((!workOfDayModel.isCheckIn && !workOfDayModel.isCheckOut)) 
+                  {
+                     <tr>
+                    <td>
+                      <div class="day" style="padding-left: 48px;">
+                        <span class="icon-text has-text-info-dark has-text-weight-bold">
+                          <span>@workOfDayModel.dateWork</span>
+                          <span class="load-more click icon material-icons material-symbols-outlined is-size-7"></span>
+                        </span>
+                      </div>
+                    </td>
+                    <td>
+                      <span>Không nộp Todolist!!!</span>
+                    </td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                  </tr>
+                  }
+                  else
+                  {
                   @if(workOfDayModel.isCheckIn)
                   {
                   <tr>
                     <td>
                       <div class="day" style="padding-left: 48px;">
-                        <span class="icon-text has-text-info-dark has-text-weight-bold" style="align-items: baseline;">
+                        <span class="icon-text has-text-info-dark has-text-weight-bold">
                           <span>@workOfDayModel.dateWork</span>
                           <span
-                            class="load-more click icon material-icons material-symbols-outlined is-size-7" @onclick="() => showWorkList(workOfDayModel)">play_arrow</span>
+                            class="load-more click icon material-icons material-symbols-outlined is-size-7 is-flex" @onclick="() => showWorkList(workOfDayModel)">play_arrow</span>
                         </span>
                       </div>
                     </td>
@@ -440,15 +475,7 @@
                       @if(workOfDayModel.dateCheckIn != 0)
                       {
                       <span>@(new DateTime(workOfDayModel.dateCheckIn).ToString("dd'/'MM")) - @(new DateTime(workOfDayModel.dateCheckIn).ToString("hh:mm"))</span>
-
-                        @if(workOfDayModel.dateCheckIn < ((DateTime.Parse(workOfDayModel.dateWork).AddDays(-1) + new TimeSpan(0, 23, 30, 0)).Ticks)) 
-                        {
-                          <span class="ml-2 has-text-success">Đúng hạn</span>
-                        }
-                        else
-                        {
-                          <span class="ml-2 has-text-danger">Trễ hạn</span>
-                        }
+                      <span class="ml-2 @(workOfDayModel.checkInStatus == "Trễ hạn" ? "has-text-danger" : "has-text-success")">@workOfDayModel.checkInStatus</span>
                       } 
                       else {
                       <span>Chưa check-in</span>
@@ -461,14 +488,7 @@
                           @if(workOfDayModel.dateCheckOut != 0)
                           {
                           <span>@(new DateTime(workOfDayModel.dateCheckOut).ToString("dd'/'MM")) - @(new DateTime(workOfDayModel.dateCheckOut).ToString("hh:mm"))</span>
-                            @if(workOfDayModel.dateCheckOut < ((DateTime.Parse(workOfDayModel.dateWork) + new TimeSpan(0, 23, 30, 0)).Ticks)) 
-                            {
-                              <span class="ml-2 has-text-success">Đúng hạn</span>
-                            }
-                            else
-                            {
-                              <span class="ml-2 has-text-danger">Trễ hạn</span>
-                            }
+                          <span class="ml-2 @(workOfDayModel.checkOutStatus == "Trễ hạn" ? "has-text-danger" : "has-text-success")">@workOfDayModel.checkOutStatus</span>
                           } 
                           else {
                           <span>Chưa check-out</span>
@@ -476,8 +496,8 @@
                         </td>
 
                         <td>
-                          <span class="has-text-weight-medium">@WorkTodoListData.countDoneWork(workOfDayModel.dateWork)/@workOfDayModel.workList.Count 
-                            - @((Convert.ToDouble((WorkTodoListData.countDoneWork(workOfDayModel.dateWork)) / Convert.ToDouble(workOfDayModel.workList.Count)) * 100).ToString("0.##"))%</span>  
+                          <span class="has-text-weight-medium">@data.countDoneWork(workOfDayModel, workOfDayModel.dateWork)/@workOfDayModel.workList.Count 
+                            - @((Convert.ToDouble((data.countDoneWork(workOfDayModel, workOfDayModel.dateWork)) / Convert.ToDouble(workOfDayModel.workList.Count)) * 100).ToString("0.##"))%</span>  
                         </td>
                         <td>
                           @if(workOfDayModel.isConfirm)
@@ -497,88 +517,121 @@
                   @foreach(WorkModel work in workOfDayModel.workList)
                   {
                   <tr>
-                    <td class="pl-6">
+                    <td class="pl-6 pt-0">
                       <span class="pl-5">• @work.workName</span>
                     </td>
-                    <td>Phân loại: <span style="color: @work.category.color">@work.category.text</span></td>
-                    <td>Ưu tiên: <span style="color: @work.priority.color">@work.priority.text</span></td>
-                    <td>@work.startTime - @work.endTime</td>
-                    <td><span>@work.status.text</span></td>
+                    <td class="pt-0">Phân loại: <span style="color: @work.category.color">@work.category.text</span></td>
+                    <td class="pt-0">Ưu tiên: <span style="color: @work.priority.color">@work.priority.text</span></td>
+                    <td class="pt-0">@work.startTime - @work.endTime</td>
+                    <td class="pt-0"><span>@work.status.text</span></td>
                   </tr>
                   }
                 }
               }
             }
+          }
           </tbody>
         </table>
       </div>
     </div>
   </div>
+  
+  <div id="modal-js-example" class="modal">
+    <div class="modal-background"></div>
+    <div class="modal-card">
+      <header class="modal-card-head">
+        <p class="modal-card-title">Modal title</p>
+        <button class="delete" aria-label="close"></button>
+      </header>
+      <section class="modal-card-body">
+        <!-- Content ... -->
+      </section>
+      <footer class="modal-card-foot">
+        <button class="button is-success">Save changes</button>
+        <button class="button">Cancel</button>
+      </footer>
+    </div>
+  </div>
+
 </section>
 @code {
     //[Inject]
     //public NavigationManager NavigationManager { get; set; }
-    //[Parameter]
-    //public string? currentDate {get; set;}
+    private WorkOfDayData data = new();
     private DateTime currentTime = DateTime.Now;
     private string currentTimeString = "";
-    private List<long> idEditList = new();
-    private List<WorkOfDayModel> workListData = new List<WorkOfDayModel>();
+    private List<string> idEditList = new();
+    private List<WorkOfDayModel> workOfDayList = new ();
+    private List<WorkOfDayModel> workOfDayHistoryList = new ();
     private WorkOfDayModel workOfDay = new();
-    private List<WorkModel> workList = new List<WorkModel>();
+    private List<WorkModel> workList = new ();
     private List<TextColorModel> statusWorkList = StatusTodoListData.findAllStatusWork();
     private List<TextColorModel> categoryList = StatusTodoListData.findAllCategory();
     private List<TextColorModel> prioriryList = StatusTodoListData.findAllPriority();
-    private List<string> timeList = TimeArray.createTimeArray("7:00", "23:00", 10);
-
-    private string dateWork = "";
-
-    private void getListFilter(string date) {
-      workList = WorkTodoListData.sortListByTime(workList);
+    private List<string> timeList = TimeArray.createTimeArray("7:00", "23:00", 10);    
+    protected override async Task OnInitializedAsync() 
+    {
+      workOfDayList = await data.findAll();
+      getHistoryWorkList();
+      getData();
+      WorkOfDayModel workOfDayTemp = data.findWorkOfDay(workOfDayList, currentTimeString);
+        if(!workOfDayList.Contains(workOfDayTemp)) {
+          // tạo ngày mới
+          WorkOfDayModel workOfNewDay = new();
+          workOfNewDay.dateWork = currentTimeString;
+          workOfNewDay.workList = new();
+          workOfDayList.Add(workOfNewDay);
+        } 
     }
-    protected override void OnInitialized()
-        {
-          currentTimeString = currentTime.ToString("dd/MM/yyyy");
-          workOfDay = WorkTodoListData.findWorkByDay(currentTimeString);
-          workList = WorkTodoListData.findAllWorkOfDayFilter(workOfDay.workList);
-          workListData = WorkTodoListData.WorkOfDayList;
-          idEditList.Clear();
-        }
 
+    private void getHistoryWorkList() {
+      string lastDate = data.getWorkOfDayHistoryList(workOfDayList)[0].dateWork;
+      DateTime lastDateWork = DateTime.Parse(lastDate);
+
+      workOfDayHistoryList.Clear();
+      for(int i = 0; i >= -4; i--) {
+        workOfDayHistoryList.Add(data.findWorkOfDay(workOfDayList, lastDateWork.AddDays(i).ToString("dd/MM/yyyy")));
+      }
+    }
+
+    private void getData() {
+      currentTimeString = currentTime.ToString("dd/MM/yyyy");
+      workOfDay = data.findWorkOfDay(workOfDayList, currentTimeString);
+      workList = data.findAllWorkOfDayFilter(workOfDay.workList);
+      idEditList.Clear();
+    }
+  
     private void nextDay() {
      currentTime = currentTime.AddDays(1);
      currentTimeString = currentTime.ToString("dd/MM/yyyy");
-     WorkOfDayModel workOfDayTemp = WorkTodoListData.findWorkByDay(currentTimeString);
-     if(!workListData.Contains(workOfDayTemp)) {
+     WorkOfDayModel workOfDayTemp = data.findWorkOfDay(workOfDayList, currentTimeString);
+     if(!workOfDayList.Contains(workOfDayTemp)) {
       // tạo ngày mới
       WorkOfDayModel workOfNewDay = new();
-      workOfNewDay.id = "Thang" + "-" + DateTime.Now.Ticks;
       workOfNewDay.dateWork = currentTimeString;
       workOfNewDay.workList = new();
-      workListData.Add(workOfNewDay);
+      workOfDayList.Add(workOfNewDay);
      } 
-     OnInitialized();
+     getData();
      //NavigationManager.NavigateTo("/todolist/" + currentTime.ToString("dd-MM-yyyy"));
     }
 
     private void previousDay() {
-     currentTime = currentTime.AddDays(-1);
+    currentTime = currentTime.AddDays(-1);
      currentTimeString = currentTime.ToString("dd/MM/yyyy");
-     WorkOfDayModel workOfDayTemp = WorkTodoListData.findWorkByDay(currentTimeString);
-     if(!workListData.Contains(workOfDayTemp)) {
+     WorkOfDayModel workOfDayTemp = data.findWorkOfDay(workOfDayList, currentTimeString);
+     if(!workOfDayList.Contains(workOfDayTemp)) {
       // tạo ngày mới
       WorkOfDayModel workOfNewDay = new();
-      workOfNewDay.id = "Thang" + "-" + DateTime.Now.Ticks;
       workOfNewDay.dateWork = currentTimeString;
       workOfNewDay.workList = new();
-      workListData.Add(workOfNewDay);
-     }
-     OnInitialized();
+      workOfDayList.Add(workOfNewDay);
+     } 
+     getData();
     }
 
     private void addFormCreate() {
       WorkModel work = new WorkModel();
-      work.id = DateTime.Now.Ticks;
       work.status = statusWorkList.ElementAt(0);
       idEditList.Add(work.id);
       work.category.id = 1;
@@ -593,11 +646,14 @@
       workList.Add(work);
     }
 
-    private void updateStatus(WorkModel workUpdate, TextColorModel status) {
-      if(WorkTodoListData.findAllWorkOfDay(currentTimeString).Contains(workUpdate)) 
+    private async Task updateStatusAsync(WorkModel workUpdate, TextColorModel status) {
+      if(workOfDay.workList.Contains(workUpdate)) 
       {
       workUpdate.status = status;
-      WorkTodoListData.updateWork(currentTimeString, workUpdate);
+
+      Task updateData = new Task(() => data.updateWork(workUpdate, workOfDay, currentTimeString));
+      updateData.Start();
+      await updateData;
       } 
       else 
       {
@@ -608,74 +664,161 @@
     private void showFormEdit(WorkModel workUpdate) {
       idEditList.Add(workUpdate.id);
     }
-  private void update(WorkModel workUpdate) {
-      if(workUpdate.workName == "") 
-      {
-           JsRuntime.InvokeVoidAsync("alert", "Bạn chưa nhập tên công việc!"); 
-      } 
-      else
-      {
-        workUpdate.category = categoryList.First(category => workUpdate.category.id == category.id);
-        workUpdate.priority = prioriryList.First(priority => workUpdate.priority.id == priority.id);
 
-        if(WorkTodoListData.findAllWorkOfDay(currentTime.ToString("dd/MM/yyyy")).Contains(workUpdate))
+    private async Task updateAsync(WorkModel workUpdate) {
+        if(workUpdate.workName == "") 
         {
-          WorkTodoListData.updateWork(currentTime.ToString("dd/MM/yyyy"), workUpdate);
+            await JsRuntime.InvokeVoidAsync("alert", "Bạn chưa nhập tên công việc!"); 
         } 
-        else 
+        else
         {
-          WorkTodoListData.createWorkOfDay(workUpdate, currentTimeString);
-        }
+          workUpdate.category = categoryList.First(category => workUpdate.category.id == category.id);
+          workUpdate.priority = prioriryList.First(priority => workUpdate.priority.id == priority.id);
 
-       categoryList = StatusTodoListData.findAllCategory();
-       prioriryList = StatusTodoListData.findAllPriority();
-       idEditList.Remove(workUpdate.id);
-       getListFilter(currentTimeString);
+          workOfDayList.Where(workOfDay => workOfDay.dateWork == currentTimeString)
+                       .ToList()
+                       .ForEach(
+                (work) =>
+                {
+                    workOfDay = work;
+                }
+            );
+
+          if(workOfDay.workList.Contains(workUpdate))
+          {
+            Task updateData = new Task(() => data.updateWork(workUpdate, workOfDay, currentTimeString));
+            updateData.Start();
+            await updateData;
+          } 
+          else 
+          {
+            Task updateData = new Task(() => data.createWork(workUpdate, workOfDay, currentTimeString));
+            updateData.Start();
+            await updateData;
+          }
+
+        categoryList = StatusTodoListData.findAllCategory();
+        prioriryList = StatusTodoListData.findAllPriority();
+        idEditList.Remove(workUpdate.id);
+        workList = data.sortListByTime(workList);
     }
   }
 
-  private async Task delete(long id, string workName) {
+  private async Task delete(string id, string workName) {
     bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Bạn có chắc muốn xóa: " + workName + "?");
     if(confirm) {
-    WorkTodoListData.deleteWorkById(currentTimeString, id);
+    data.deleteWorkById(workOfDay, currentTimeString, id);
     workList.RemoveAll(item => item.id == id);
     }
   }
 
   private async Task checkout() {
-    workList.RemoveAll(work => work.workName == "");
-    if(workList.Where(work => work.status.id == 1 || work.status.id == 3).ToList().Count > 0) 
+    if(DateTime.Parse(workOfDay.dateWork).Ticks > DateTime.Now.AddDays(1).Ticks) 
     {
-      await JsRuntime.InvokeVoidAsync("alert", "Không thể check-out khi có công việc đang ở trạng thái Todo, Doing!!"); 
-    } 
+      await JsRuntime.InvokeVoidAsync("alert", "Chưa đến thời điểm check-out"); 
+    }  
     else
     {
-      bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Xác nhận checkout !!!");
-      if(confirm) 
+      workList.RemoveAll(work => work.workName == "");
+      if(workList.Where(work => work.status.id == 1 || work.status.id == 3).ToList().Count > 0) 
       {
-      workOfDay.isCheckOut = true;
-      workOfDay.isConfirm = true;
-      workOfDay.dateCheckOut = DateTime.Now.Ticks;
-      idEditList.Clear();
-      workList.ForEach((work => update(work)));
+        await JsRuntime.InvokeVoidAsync("alert", "Không thể check-out khi có công việc đang ở trạng thái Todo, Doing!!"); 
+      } 
+      else
+      {
+        bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Xác nhận checkout !!!");
+        if(confirm) 
+        {
+        workOfDay = data.findWorkOfDay(workOfDayList, currentTimeString);
+        workOfDay.isCheckOut = true;
+        workOfDay.isConfirm = true;
+        workOfDay.dateCheckOut = DateTime.Now.Ticks;
+        long checkoutTime = (DateTime.Parse(workOfDay.dateWork) + new TimeSpan(0, 23, 30, 0)).Ticks;
+        workOfDay.checkOutStatus = workOfDay.dateCheckOut < checkoutTime ?  "Đúng hạn" :  "Trễ hạn";
+        Task updateData = new Task(() => 
+        {
+          workList.ForEach((work => updateAsync(work)));
+        });
+        updateData.Start();
+        await updateData;
+        idEditList.Clear();
+        getHistoryWorkList();
+        }
       }
     }
   }
 
   private async Task checkin() {
+    int countWorkList = 0;
+    workList.ForEach((work) => {
+      if (work.workName != "")
+      {
+        countWorkList ++;
+      } 
+      else
+      {
+        countWorkList = 0;
+        JsRuntime.InvokeVoidAsync("alert", "Bạn chưa nhập tên công việc!"); 
+      } 
+    });
+
+    if(countWorkList != 0) 
+    {
     bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Xác nhận checkin !!!");
       if(confirm) 
       {
-        workList.ForEach((work => update(work)));
         workList.RemoveAll(work => work.workName == "");
         if(workList.Count() != 0) { 
+        workOfDay = data.findWorkOfDay(workOfDayList, currentTimeString);
         workOfDay.isCheckIn = true;
         workOfDay.dateCheckIn = DateTime.Now.Ticks;
+        long checkinTime = (DateTime.Parse(workOfDay.dateWork).AddDays(-1) + new TimeSpan(0, 23, 30, 0)).Ticks;
+        workOfDay.checkInStatus = workOfDay.dateCheckIn < checkinTime ?  "Đúng hạn" :  "Trễ hạn";
+        Task updateData = new Task(() => 
+        {
+          workList.ForEach((work => updateAsync(work)));
+        });
+        updateData.Start();
+        await updateData;
         }
+        idEditList.Clear();
+        getHistoryWorkList();
       }
+    }
   }
 
   private void showWorkList(WorkOfDayModel workCheckActive) {
     workCheckActive.isActive = !workCheckActive.isActive;
+  }
+
+  // đếm ngày liên tiếp đúng hạn todolist
+  private string countTheDay() {
+    int count = 0;
+    int thisMonth = DateTime.Now.Month;
+    int thisYear = DateTime.Now.Year;
+    List<WorkOfDayModel> workOfDayThisMonthList = new();
+    workOfDayList.ForEach((workOfDayTemp) => {
+      if(workOfDayTemp.workList.Count > 0 
+        && DateTime.Parse(workOfDayTemp.dateWork).Month == thisMonth 
+        && DateTime.Parse(workOfDayTemp.dateWork).Year == thisYear) 
+        {
+          workOfDayThisMonthList.Add(workOfDayTemp);
+        }  
+    });
+
+    workOfDayThisMonthList = data.sortWorkOfDayList(workOfDayThisMonthList);
+    workOfDayThisMonthList.ForEach((work) => {
+      if(work.checkInStatus == "Đúng hạn" && work.checkOutStatus == "Đúng hạn") {
+        count++;
+      } 
+      else
+      {
+          if(!(work.checkInStatus == "Đúng hạn" && DateTime.Parse(work.dateWork).Ticks > DateTime.Now.Ticks))
+        {
+          count = 0;
+        }
+      }
+    });
+    return count.ToString();
   }
 }

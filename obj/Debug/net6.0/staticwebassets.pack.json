@@ -17,6 +17,10 @@
       "PackagePath": "staticwebassets\\favicon.ico"
     },
     {
+      "Id": "D:\\conando\\blazor\\WorkDo1\\wwwroot\\js\\index.js",
+      "PackagePath": "staticwebassets\\js\\index.js"
+    },
+    {
       "Id": "D:\\conando\\blazor\\WorkDo1\\wwwroot\\scss\\site.scss",
       "PackagePath": "staticwebassets\\scss\\site.scss"
     },

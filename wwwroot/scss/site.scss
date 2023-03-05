@@ -35,9 +35,9 @@ table {
   width: 100%;
 }
 
-html {
-  overflow-y: auto !important;
-}
+// html {
+//   overflow-y: auto !important;
+// }
 .has-font-13 {
   font-size: 13px !important;
 }
@@ -52,6 +52,43 @@ html {
 
 .is-none {
   display: none;
+}
+
+.input-calendar {
+  display: flex;
+  height: fit-content;
+  align-items: center;
+
+  .calendar-item {
+    display: flex;
+    border: 0.05rem solid #355caa;
+    border-radius: 5px 0 0 5px;
+    align-items: center;
+
+    .date-of-week {
+      width: 25px;
+    }
+  }
+
+  .calendar-back {
+    border: 0.05rem solid #355caa;
+    display: flex;
+    border-right: unset !important;
+    border-left: unset !important;
+  }
+
+  .calendar-forward {
+    border: 0.05rem solid #355caa;
+    border-radius: 0px 5px 5px 0px;
+    display: flex;
+  }
+
+  .calendar-back:hover,
+  .calendar-forward:hover {
+    background-color: #3e56c4;
+    cursor: pointer;
+    color: white;
+  }
 }
 
 #sidebar {
@@ -254,7 +291,7 @@ html {
           display: block !important;
         }
       }
-      
+
       li {
         display: block !important;
       }
@@ -293,43 +330,6 @@ html {
 
       .main-content {
         @include boxShadow();
-
-        .input-calendar {
-          display: flex;
-          height: 100%;
-          align-items: center;
-
-          .calendar-item {
-            display: flex;
-            border: 0.05rem solid #355caa;
-            border-radius: 5px 0 0 5px;
-            align-items: center;
-
-            .date-of-week {
-              width: 25px;
-            }
-          }
-
-          .calendar-back {
-            border: 0.05rem solid #355caa;
-            display: flex;
-            border-right: unset !important;
-            border-left: unset !important;
-          }
-
-          .calendar-forward {
-            border: 0.05rem solid #355caa;
-            border-radius: 0px 5px 5px 0px;
-            display: flex;
-          }
-
-          .calendar-back:hover,
-          .calendar-forward:hover {
-            background-color: #3e56c4;
-            cursor: pointer;
-            color: white;
-          }
-        }
 
         .table-todolist {
           tbody {

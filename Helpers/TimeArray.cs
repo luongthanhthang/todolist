@@ -36,7 +36,8 @@ public class TimeArray
     return timeArrayResult;
   }
 
-  public static string getDateOfWeek(DateTime current) {
+  public static string getDateOfWeek(DateTime current)
+  {
     int day = Convert.ToInt32(current.DayOfWeek);
     return day == 0 ? "CN" : "T" + (day + 1);
   }

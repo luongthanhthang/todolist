@@ -1,7 +1,7 @@
-@page "/todolist"
+@page "/todolist/{currentTimeString?}"
 
 @inject IJSRuntime JsRuntime
-@* @page "/todolist/{currentDate?}" *@
+@inject NavigationManager navigationManager
 
 <section class="todo-list py-1">
   <div class="mx-4">
@@ -62,7 +62,7 @@
           </div>
           <div class="column is-narrow">
             <div class="input-calendar">
-              <div class="calendar-item p-2">
+              <div class="calendar-item p-1">
                 <span class="icon">
                   <span class="material-icons-outlined is-size-7 mr-2">
                     calendar_month
@@ -73,14 +73,14 @@
                   <p> - @currentTime.ToString("dd'/'MM'/'yyyy")</p>
                 </div>
               </div>
-              <div class="calendar-back p-2" @onclick="previousDay">
+              <div class="calendar-back p-1" @onclick="previousDay">
                 <span class="icon">
                   <span class="material-icons-outlined is-size-7">
                     arrow_back_ios
                   </span>
                 </span>
               </div>
-              <div class="calendar-forward p-2" @onclick="nextDay">
+              <div class="calendar-forward p-1" @onclick="nextDay">
                 <span class="icon">
                   <span class="material-icons-outlined is-size-7">
                     arrow_forward_ios
@@ -279,7 +279,7 @@
               <td colspan="3"  class="pb-0">
                 <div class="control is-flex is-justify-content-flex-end mb-2">
                   <button class="click edit blue-text showFormEdit mr-2" style="border: none"
-                    @onclick="() => updateAsync(work)">
+                    @onclick="() => update(work)">
                     <span class="icon-text has-text-info-dark has-background-white">
                       <span class="icon">
                         <span class="icon material-icons material-symbols-outlined">update</span>
@@ -364,11 +364,11 @@
                 
                 @if(workOfDay.isCheckIn) 
                 {
-                <div data-target="modal-js-example" id="check-out" class="js-modal-trigger click box-shadow check-out button-control">
-                  <span class="icon material-icons material-symbols-outlined">
-                    done
-                  </span>
-                  <span class="click">check-out</span>
+                <div id="check-out" class="click box-shadow check-out button-control" @onclick="checkout">
+                    <span class="icon material-icons material-symbols-outlined">
+                      done
+                    </span>
+                    <span class="click">check-out</span>
                 </div>
                 }
               </div>
@@ -443,7 +443,7 @@
                      <tr>
                     <td>
                       <div class="day" style="padding-left: 48px;">
-                        <span class="icon-text has-text-info-dark has-text-weight-bold">
+                        <span class="icon-text has-text-grey-dark has-text-weight-bold">
                           <span>@workOfDayModel.dateWork</span>
                           <span class="load-more click icon material-icons material-symbols-outlined is-size-7"></span>
                         </span>
@@ -536,98 +536,147 @@
     </div>
   </div>
   
-  <div id="modal-js-example" class="modal">
+  <div class="modal @(isCheckModalPending?"is-active":"")">
     <div class="modal-background"></div>
     <div class="modal-card">
       <header class="modal-card-head">
-        <p class="modal-card-title">Modal title</p>
-        <button class="delete" aria-label="close"></button>
+        <p class="modal-card-title has-text-grey has-text-weight-bold is-size-5">CÔNG VIỆC CHỜ XỬ LÝ</p>
+        <button class="delete" aria-label="close" @onclick="() => isCheckModalPending = !isCheckModalPending"></button>
       </header>
       <section class="modal-card-body">
-        <!-- Content ... -->
+          @{int index = 0;}
+          @foreach (WorkModel workPending in workPendingList)
+          {
+        <div class="columns is-multiline is-justify-content-space-between">
+          <div class="column">
+            <div class="has-text-weight-semibold">@workPending.workName</div>
+            @if (workPendingList[index].details != "")
+            {
+            <div class="has-text-grey mt-1">Chi tiết: <span class="ml-2">@workPending.details</span></div>
+            }
+            @if (workPendingList[index].result != "")
+            {
+            <div class="has-text-grey mt-1">Kết quả: <span class="ml-2">@workPending.result</span></div>
+            }
+          </div>
+          <div class="column">
+            <div class="has-text-grey">Thời gian thực hiện</div>
+            <div class="input-calendar mt-1">
+            <div class="calendar-item p-1">
+              <span class="icon">
+                <span class="material-icons-outlined is-size-7 mr-2">
+                  calendar_month
+                </span>
+              </span>
+              <div class="is-flex">
+                <p>@datePendingList[index].ToString("dd/MM/yyyy")</p>
+              </div>
+            </div>
+            <div class="calendar-back p-1" @onclick="() => previousDatePending(workPending)">
+              <span class="icon">
+                <span class="material-icons-outlined is-size-7">
+                  arrow_back_ios
+                </span>
+              </span>
+            </div>
+            <div class="calendar-forward p-1" @onclick="() => nextDatePending(workPending)">
+              <span class="icon">
+                <span class="material-icons-outlined is-size-7">
+                  arrow_forward_ios
+                </span>
+              </span>
+            </div>
+            </div>
+          </div>
+        </div>
+        index ++;
+        }
       </section>
-      <footer class="modal-card-foot">
-        <button class="button is-success">Save changes</button>
-        <button class="button">Cancel</button>
+      <footer class="modal-card-foot is-justify-content-flex-end">
+        <div class="button mr-2" @onclick="() => isCheckModalPending = !isCheckModalPending">
+          <span class="material-icons-outlined is-size-6 mr-2">cancel</span>
+          <span class="click">huỷ</span>
+        </div>
+        <div class="button is-danger" @onclick="checkoutPending">
+          <span class="material-icons material-symbols-outlined mr-2">done</span>
+          <span class="click">check-out</span>
+        </div>
       </footer>
     </div>
   </div>
-
 </section>
+
 @code {
-    //[Inject]
-    //public NavigationManager NavigationManager { get; set; }
+    [Parameter]
+    public string currentTimeString { get; set; }
     private WorkOfDayData data = new();
     private DateTime currentTime = DateTime.Now;
-    private string currentTimeString = "";
     private List<string> idEditList = new();
     private List<WorkOfDayModel> workOfDayList = new ();
     private List<WorkOfDayModel> workOfDayHistoryList = new ();
     private WorkOfDayModel workOfDay = new();
     private List<WorkModel> workList = new ();
+    private List<WorkModel> workPendingList = new ();
     private List<TextColorModel> statusWorkList = StatusTodoListData.findAllStatusWork();
     private List<TextColorModel> categoryList = StatusTodoListData.findAllCategory();
     private List<TextColorModel> prioriryList = StatusTodoListData.findAllPriority();
-    private List<string> timeList = TimeArray.createTimeArray("7:00", "23:00", 10);    
-    protected override async Task OnInitializedAsync() 
-    {
-      workOfDayList = await data.findAll();
-      getHistoryWorkList();
-      getData();
+    private List<string> timeList = TimeArray.createTimeArray("7:00", "23:00", 10);
+    private bool isCheckModalPending = false; 
+    private List<DateTime> datePendingList = new();
+    protected override async Task OnInitializedAsync() {
+      currentTimeString = currentTimeString ?? DateTime.Now.ToString("dd-MM-yyyy");
+      currentTime = DateTime.Parse(currentTimeString);
+      Task getData = new Task(() => {
+        workOfDayList = data.findAll();
+        getHistoryWorkList();   
+      });
+      getData.Start();
+      await getData;
+    }
+    protected override void OnParametersSet() {
+      isCheckModalPending = false;
+      // khi chuyển ngày mà ngày đó chưa tồn tại trong database thì tạo mới
       WorkOfDayModel workOfDayTemp = data.findWorkOfDay(workOfDayList, currentTimeString);
-        if(!workOfDayList.Contains(workOfDayTemp)) {
-          // tạo ngày mới
-          WorkOfDayModel workOfNewDay = new();
-          workOfNewDay.dateWork = currentTimeString;
-          workOfNewDay.workList = new();
-          workOfDayList.Add(workOfNewDay);
-        } 
+      if(!workOfDayList.Contains(workOfDayTemp)) {
+      // tạo ngày mới
+      workOfDayList.Add(workOfDayTemp);
+      } 
+     getData();
     }
 
-    private void getHistoryWorkList() {
-      string lastDate = data.getWorkOfDayHistoryList(workOfDayList)[0].dateWork;
-      DateTime lastDateWork = DateTime.Parse(lastDate);
-
-      workOfDayHistoryList.Clear();
-      for(int i = 0; i >= -4; i--) {
-        workOfDayHistoryList.Add(data.findWorkOfDay(workOfDayList, lastDateWork.AddDays(i).ToString("dd/MM/yyyy")));
+    private void checkListPending() {
+      workPendingList.Clear();
+      datePendingList.Clear();
+      isCheckModalPending = false;
+      int count = 0;
+      workList.ForEach((work) => {
+        if(work.status.id == 4) 
+        {
+          DateTime datePending = DateTime.Parse(workOfDay.dateWork);
+          workPendingList.Add(work);
+          datePendingList.Add(datePending);
+          count++;
+        }
+      });
+      if(count > 0) {
+        isCheckModalPending = true;
       }
     }
-
-    private void getData() {
-      currentTimeString = currentTime.ToString("dd/MM/yyyy");
-      workOfDay = data.findWorkOfDay(workOfDayList, currentTimeString);
-      workList = data.findAllWorkOfDayFilter(workOfDay.workList);
-      idEditList.Clear();
+    
+    protected override async Task OnAfterRenderAsync(bool firstRender){
+      //await JsRuntime.InvokeVoidAsync("getModal");
     }
-  
+
     private void nextDay() {
      currentTime = currentTime.AddDays(1);
-     currentTimeString = currentTime.ToString("dd/MM/yyyy");
-     WorkOfDayModel workOfDayTemp = data.findWorkOfDay(workOfDayList, currentTimeString);
-     if(!workOfDayList.Contains(workOfDayTemp)) {
-      // tạo ngày mới
-      WorkOfDayModel workOfNewDay = new();
-      workOfNewDay.dateWork = currentTimeString;
-      workOfNewDay.workList = new();
-      workOfDayList.Add(workOfNewDay);
-     } 
-     getData();
-     //NavigationManager.NavigateTo("/todolist/" + currentTime.ToString("dd-MM-yyyy"));
+     currentTimeString = currentTime.ToString("dd-MM-yyyy");
+     navigationManager.NavigateTo("todolist/" + currentTimeString);
     }
 
     private void previousDay() {
-    currentTime = currentTime.AddDays(-1);
-     currentTimeString = currentTime.ToString("dd/MM/yyyy");
-     WorkOfDayModel workOfDayTemp = data.findWorkOfDay(workOfDayList, currentTimeString);
-     if(!workOfDayList.Contains(workOfDayTemp)) {
-      // tạo ngày mới
-      WorkOfDayModel workOfNewDay = new();
-      workOfNewDay.dateWork = currentTimeString;
-      workOfNewDay.workList = new();
-      workOfDayList.Add(workOfNewDay);
-     } 
-     getData();
+     currentTime = currentTime.AddDays(-1);
+     currentTimeString = currentTime.ToString("dd-MM-yyyy");
+     navigationManager.NavigateTo("todolist/" + currentTimeString);
     }
 
     private void addFormCreate() {
@@ -665,10 +714,10 @@
       idEditList.Add(workUpdate.id);
     }
 
-    private async Task updateAsync(WorkModel workUpdate) {
+    private async Task update(WorkModel workUpdate) {
         if(workUpdate.workName == "") 
         {
-            await JsRuntime.InvokeVoidAsync("alert", "Bạn chưa nhập tên công việc!"); 
+           await JsRuntime.InvokeVoidAsync("alert", "Bạn chưa nhập tên công việc!"); 
         } 
         else
         {
@@ -677,148 +726,210 @@
 
           workOfDayList.Where(workOfDay => workOfDay.dateWork == currentTimeString)
                        .ToList()
-                       .ForEach(
-                (work) =>
-                {
-                    workOfDay = work;
-                }
-            );
+                       .ForEach((work) =>{workOfDay = work;});
 
           if(workOfDay.workList.Contains(workUpdate))
           {
-            Task updateData = new Task(() => data.updateWork(workUpdate, workOfDay, currentTimeString));
-            updateData.Start();
-            await updateData;
+            data.updateWork(workUpdate, workOfDay, currentTimeString);
           } 
           else 
           {
-            Task updateData = new Task(() => data.createWork(workUpdate, workOfDay, currentTimeString));
-            updateData.Start();
-            await updateData;
+            data.createWork(workUpdate, workOfDay, currentTimeString);
           }
-
-        categoryList = StatusTodoListData.findAllCategory();
-        prioriryList = StatusTodoListData.findAllPriority();
-        idEditList.Remove(workUpdate.id);
-        workList = data.sortListByTime(workList);
-    }
-  }
-
-  private async Task delete(string id, string workName) {
-    bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Bạn có chắc muốn xóa: " + workName + "?");
-    if(confirm) {
-    data.deleteWorkById(workOfDay, currentTimeString, id);
-    workList.RemoveAll(item => item.id == id);
-    }
-  }
-
-  private async Task checkout() {
-    if(DateTime.Parse(workOfDay.dateWork).Ticks > DateTime.Now.AddDays(1).Ticks) 
-    {
-      await JsRuntime.InvokeVoidAsync("alert", "Chưa đến thời điểm check-out"); 
-    }  
-    else
-    {
-      workList.RemoveAll(work => work.workName == "");
-      if(workList.Where(work => work.status.id == 1 || work.status.id == 3).ToList().Count > 0) 
-      {
-        await JsRuntime.InvokeVoidAsync("alert", "Không thể check-out khi có công việc đang ở trạng thái Todo, Doing!!"); 
-      } 
-      else
-      {
-        bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Xác nhận checkout !!!");
-        if(confirm) 
-        {
-        workOfDay = data.findWorkOfDay(workOfDayList, currentTimeString);
-        workOfDay.isCheckOut = true;
-        workOfDay.isConfirm = true;
-        workOfDay.dateCheckOut = DateTime.Now.Ticks;
-        long checkoutTime = (DateTime.Parse(workOfDay.dateWork) + new TimeSpan(0, 23, 30, 0)).Ticks;
-        workOfDay.checkOutStatus = workOfDay.dateCheckOut < checkoutTime ?  "Đúng hạn" :  "Trễ hạn";
-        Task updateData = new Task(() => 
-        {
-          workList.ForEach((work => updateAsync(work)));
-        });
-        updateData.Start();
-        await updateData;
-        idEditList.Clear();
-        getHistoryWorkList();
+          categoryList = StatusTodoListData.findAllCategory();
+          prioriryList = StatusTodoListData.findAllPriority();
+          idEditList.Remove(workUpdate.id);
+          workList = data.sortListByTime(workList);
         }
+     }
+
+    private async Task delete(string id, string workName) {
+      bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Bạn có chắc muốn xóa: " + workName + "?");
+      if(confirm) {
+      data.deleteWorkById(workOfDay, currentTimeString, id);
+      workList.RemoveAll(item => item.id == id);
       }
     }
-  }
-
-  private async Task checkin() {
-    int countWorkList = 0;
-    workList.ForEach((work) => {
-      if (work.workName != "")
+    private async Task checkout() {
+      if(DateTime.Parse(workOfDay.dateWork).Ticks > DateTime.Now.AddDays(1).Ticks) 
       {
-        countWorkList ++;
-      } 
+        await JsRuntime.InvokeVoidAsync("alert", "Chưa đến thời điểm check-out"); 
+      }  
       else
-      {
-        countWorkList = 0;
-        JsRuntime.InvokeVoidAsync("alert", "Bạn chưa nhập tên công việc!"); 
-      } 
-    });
-
-    if(countWorkList != 0) 
-    {
-    bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Xác nhận checkin !!!");
-      if(confirm) 
       {
         workList.RemoveAll(work => work.workName == "");
-        if(workList.Count() != 0) { 
-        workOfDay = data.findWorkOfDay(workOfDayList, currentTimeString);
-        workOfDay.isCheckIn = true;
-        workOfDay.dateCheckIn = DateTime.Now.Ticks;
-        long checkinTime = (DateTime.Parse(workOfDay.dateWork).AddDays(-1) + new TimeSpan(0, 23, 30, 0)).Ticks;
-        workOfDay.checkInStatus = workOfDay.dateCheckIn < checkinTime ?  "Đúng hạn" :  "Trễ hạn";
-        Task updateData = new Task(() => 
+        if(workList.Where(work => work.status.id == 1 || work.status.id == 3).ToList().Count > 0) 
         {
-          workList.ForEach((work => updateAsync(work)));
-        });
-        updateData.Start();
-        await updateData;
+          await JsRuntime.InvokeVoidAsync("alert", "Không thể check-out khi có công việc đang ở trạng thái Todo, Doing!!"); 
+        } 
+        else
+        {
+          checkListPending();
+          if(!isCheckModalPending) {
+            bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Xác nhận checkout !!!");
+            if(confirm) 
+            {
+            workOfDay = data.findWorkOfDay(workOfDayList, currentTimeString);
+            workOfDay.isCheckOut = true;
+            workOfDay.isConfirm = true;
+            workOfDay.dateCheckOut = DateTime.Now.Ticks;
+            long checkoutTime = (DateTime.Parse(workOfDay.dateWork) + new TimeSpan(0, 23, 30, 0)).Ticks;
+            workOfDay.checkOutStatus = workOfDay.dateCheckOut < checkoutTime ?  "Đúng hạn" :  "Trễ hạn";
+            Task updateData = new Task(() => {workList.ForEach((async(work) => await update(work)));});
+            updateData.Start();
+            await updateData;
+            idEditList.Clear();
+            getHistoryWorkList();
+            workList = data.sortListByTime(workList);
+            }
+          }
         }
-        idEditList.Clear();
-        getHistoryWorkList();
       }
     }
-  }
 
-  private void showWorkList(WorkOfDayModel workCheckActive) {
-    workCheckActive.isActive = !workCheckActive.isActive;
-  }
-
-  // đếm ngày liên tiếp đúng hạn todolist
-  private string countTheDay() {
-    int count = 0;
-    int thisMonth = DateTime.Now.Month;
-    int thisYear = DateTime.Now.Year;
-    List<WorkOfDayModel> workOfDayThisMonthList = new();
-    workOfDayList.ForEach((workOfDayTemp) => {
-      if(workOfDayTemp.workList.Count > 0 
-        && DateTime.Parse(workOfDayTemp.dateWork).Month == thisMonth 
-        && DateTime.Parse(workOfDayTemp.dateWork).Year == thisYear) 
+    private async Task checkin() {
+      int countWorkList = 0;
+      workList.ForEach((work) => {
+        if (work.workName != "")
         {
-          workOfDayThisMonthList.Add(workOfDayTemp);
-        }  
-    });
-
-    workOfDayThisMonthList = data.sortWorkOfDayList(workOfDayThisMonthList);
-    workOfDayThisMonthList.ForEach((work) => {
-      if(work.checkInStatus == "Đúng hạn" && work.checkOutStatus == "Đúng hạn") {
-        count++;
-      } 
-      else
-      {
-          if(!(work.checkInStatus == "Đúng hạn" && DateTime.Parse(work.dateWork).Ticks > DateTime.Now.Ticks))
+          countWorkList ++;
+        } 
+        else
         {
-          count = 0;
+          countWorkList = 0;
+          JsRuntime.InvokeVoidAsync("alert", "Bạn chưa nhập tên công việc!"); 
+        } 
+      });
+
+      if(countWorkList != 0) {
+        bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Xác nhận checkin !!!");
+        if(confirm) 
+        {
+          workList.RemoveAll(work => work.workName == "");
+          if(workList.Count() != 0) { 
+          workOfDay = data.findWorkOfDay(workOfDayList, currentTimeString);
+          workOfDay.isCheckIn = true;
+          workOfDay.dateCheckIn = DateTime.Now.Ticks;
+          long checkinTime = (DateTime.Parse(workOfDay.dateWork).AddDays(-1) + new TimeSpan(0, 23, 30, 0)).Ticks;
+          workOfDay.checkInStatus = workOfDay.dateCheckIn < checkinTime ?  "Đúng hạn" :  "Trễ hạn";
+          Task updateData = new Task(() => 
+          {
+            workList.ForEach((async(work) => await update(work)));
+          });
+          updateData.Start();
+          await updateData;
+          }
+          idEditList.Clear();
+          getHistoryWorkList();
+          workList = data.sortListByTime(workList);
         }
       }
-    });
-    return count.ToString();
-  }
+    }
+
+    private async Task checkoutPending() {
+      int count = 0;
+      datePendingList.ForEach((datePending) => {
+        if(datePending.Ticks == currentTime.Ticks) {
+          count++;
+        }
+      });
+      if(count != 0) {
+        await JsRuntime.InvokeVoidAsync("alert", "Ngày thực hiện của công việc chờ xử lý phải sau ngày hôm nay!");
+      } 
+      else 
+      {
+        isCheckModalPending = false;
+        bool confirm = await JsRuntime.InvokeAsync<bool>("confirm", "Xác nhận checkout !!!");
+          if(confirm) 
+          {
+              workOfDay = data.findWorkOfDay(workOfDayList, currentTimeString);
+              workOfDay.isCheckOut = true;
+              workOfDay.isConfirm = true;
+              workOfDay.dateCheckOut = DateTime.Now.Ticks;
+              long checkoutTime = (DateTime.Parse(workOfDay.dateWork) + new TimeSpan(0, 23, 30, 0)).Ticks;
+              workOfDay.checkOutStatus = (workOfDay.dateCheckOut < checkoutTime) ?  "Đúng hạn" :  "Trễ hạn";
+              for (int i = 0; i < workOfDay.workList.Count; i++)
+              {
+                await update(workOfDay.workList[i]);
+              }
+              idEditList.Clear();
+              getHistoryWorkList();
+
+            // chuyển công việc pending
+            int index = 0;
+            datePendingList.ForEach((datePending) => {
+              workPendingList[index].status = statusWorkList[0];
+              // data hiện tại
+              WorkOfDayModel workOfDayTemp = new();
+              workOfDayTemp = data.findWorkOfDay(workOfDayList, datePending.ToString("dd-MM-yyyy"));
+              workOfDayTemp.workList.Add(workPendingList[index]);
+              // database
+              data.saveOfUpdate(workOfDayTemp);
+              index++;
+            });
+            navigationManager.NavigateTo("todolist/" + currentTimeString, true);
+          }
+      } 
+    }
+    private void showWorkList(WorkOfDayModel workCheckActive) {
+      workCheckActive.isActive = !workCheckActive.isActive;
+    }
+    // đếm ngày liên tiếp đúng hạn todolist
+    private string countTheDay() {
+      int count = 0;
+      int thisMonth = DateTime.Now.Month;
+      int thisYear = DateTime.Now.Year;
+      List<WorkOfDayModel> workOfDayThisMonthList = new();
+      workOfDayList.ForEach((workOfDayTemp) => {
+        if(workOfDayTemp.workList.Count > 0 
+          && DateTime.Parse(workOfDayTemp.dateWork).Month == thisMonth 
+          && DateTime.Parse(workOfDayTemp.dateWork).Year == thisYear) 
+          {
+            workOfDayThisMonthList.Add(workOfDayTemp);
+          }  
+      });
+
+      workOfDayThisMonthList = data.sortWorkOfDayList(workOfDayThisMonthList);
+      workOfDayThisMonthList.ForEach((work) => {
+        if(work.checkInStatus == "Đúng hạn" && work.checkOutStatus == "Đúng hạn") {
+          count++;
+        } 
+        else
+        {
+            if(!(work.checkInStatus == "Đúng hạn" && DateTime.Parse(work.dateWork).Ticks > DateTime.Now.Ticks))
+          {
+            count = 0;
+          }
+        }
+      });
+      return count.ToString();
+    }
+    private void previousDatePending(WorkModel workPending) {
+      int index = workPendingList.FindIndex(workTemp => workTemp.id == workPending.id);
+      if(datePendingList[index].AddDays(-1).Ticks < currentTime.Ticks) {
+        JsRuntime.InvokeVoidAsync("alert", "Ngày thực hiện của công việc chờ xử lý phải sau ngày hôm nay!");
+      } else {
+        datePendingList[index] = datePendingList[index].AddDays(-1);
+      }
+    }
+    private void nextDatePending(WorkModel workPending) {
+      int index = workPendingList.FindIndex(workTemp => workTemp.id == workPending.id);
+      datePendingList[index] = datePendingList[index].AddDays(1);
+    }
+    private void getData() {
+        workOfDay = data.findWorkOfDay(workOfDayList, currentTimeString);
+        workList = data.findAllWorkOfDayFilter(workOfDay.workList);
+        idEditList.Clear();
+    }
+    private void getHistoryWorkList() {
+      if(data.getWorkOfDayHistoryList(workOfDayList).Count > 0 ) {
+        string lastDate = data.getWorkOfDayHistoryList(workOfDayList)[0].dateWork;
+        DateTime lastDateWork = DateTime.Parse(lastDate);
+
+        workOfDayHistoryList.Clear();
+        for(int i = 0; i >= -4; i--) {
+          workOfDayHistoryList.Add(data.findWorkOfDay(workOfDayList, lastDateWork.AddDays(i).ToString("dd-MM-yyyy")));
+        }
+      }
+    }
 }

@@ -9,57 +9,57 @@ build_property.EnforceExtendedAnalyzerRules =
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = WorkDo1
 build_property.RootNamespace = WorkDo1
-build_property.ProjectDir = D:\conando\blazor\WorkDo1\
+build_property.ProjectDir = d:\conando\blazor\WorkDo1\
 build_property.RazorLangVersion = 6.0
 build_property.SupportLocalizedComponentNames = 
 build_property.GenerateRazorMetadataSourceChecksumAttributes = 
-build_property.MSBuildProjectDirectory = D:\conando\blazor\WorkDo1
+build_property.MSBuildProjectDirectory = d:\conando\blazor\WorkDo1
 build_property._RazorSourceGeneratorDebug = 
 
-[D:/conando/blazor/WorkDo1/App.razor]
+[d:/conando/blazor/WorkDo1/App.razor]
 build_metadata.AdditionalFiles.TargetPath = QXBwLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/conando/blazor/WorkDo1/Pages/DetailWorkTodoList.razor]
+[d:/conando/blazor/WorkDo1/Pages/DetailWorkTodoList.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRGV0YWlsV29ya1RvZG9MaXN0LnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/conando/blazor/WorkDo1/Pages/Index.razor]
+[d:/conando/blazor/WorkDo1/Pages/Index.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcSW5kZXgucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/conando/blazor/WorkDo1/Pages/WorkList.razor]
+[d:/conando/blazor/WorkDo1/Pages/WorkList.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcV29ya0xpc3QucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/conando/blazor/WorkDo1/Pages/WorkList1.razor]
+[d:/conando/blazor/WorkDo1/Pages/WorkList1.razor]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcV29ya0xpc3QxLnJhem9y
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/conando/blazor/WorkDo1/Shared/Header.razor]
+[d:/conando/blazor/WorkDo1/Shared/Header.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXEhlYWRlci5yYXpvcg==
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/conando/blazor/WorkDo1/Shared/MainLayout.razor]
+[d:/conando/blazor/WorkDo1/Shared/MainLayout.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXE1haW5MYXlvdXQucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/conando/blazor/WorkDo1/Shared/Sidebar.razor]
+[d:/conando/blazor/WorkDo1/Shared/Sidebar.razor]
 build_metadata.AdditionalFiles.TargetPath = U2hhcmVkXFNpZGViYXIucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/conando/blazor/WorkDo1/_Imports.razor]
+[d:/conando/blazor/WorkDo1/_Imports.razor]
 build_metadata.AdditionalFiles.TargetPath = X0ltcG9ydHMucmF6b3I=
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/conando/blazor/WorkDo1/Pages/Error.cshtml]
+[d:/conando/blazor/WorkDo1/Pages/Error.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcRXJyb3IuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/conando/blazor/WorkDo1/Pages/_Host.cshtml]
+[d:/conando/blazor/WorkDo1/Pages/_Host.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0hvc3QuY3NodG1s
 build_metadata.AdditionalFiles.CssScope = 
 
-[D:/conando/blazor/WorkDo1/Pages/_Layout.cshtml]
+[d:/conando/blazor/WorkDo1/Pages/_Layout.cshtml]
 build_metadata.AdditionalFiles.TargetPath = UGFnZXNcX0xheW91dC5jc2h0bWw=
 build_metadata.AdditionalFiles.CssScope = 

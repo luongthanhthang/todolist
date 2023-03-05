@@ -1,32 +1,30 @@
-window.addEventListener('DOMContentLoaded', () => {
-  console.log(13123);
+window.getModal = () => {
   // Functions to open and close a modal
   function openModal($el) {
-    $el.classList.add('is-active');
+    $el.classList.add("is-active");
   }
 
   function closeModal($el) {
-    $el.classList.remove('is-active');
+    $el.classList.remove("is-active");
   }
 
-  console.log(document.querySelectorAll('#check-out'));
   // Add a click event on buttons to open a specific modal
-  (document.querySelectorAll('.js-modal-trigger') || []).forEach(($trigger) => {
+  (document.querySelectorAll(".js-modal-trigger") || []).forEach(($trigger) => {
     const modal = $trigger.dataset.target;
-    console.log(13222123);
-    console.log(modal);
     const $target = document.getElementById(modal);
 
-    $trigger.addEventListener('click', () => {
+    $trigger.addEventListener("click", () => {
       openModal($target);
     });
   });
 
   // Add a click event on various child elements to close the parent modal
-  (document.querySelectorAll('.modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button') || []).forEach(($close) => {
-    const $target = $close.closest('.modal');
+  (
+    document.querySelectorAll(".modal-background, .modal-close, .modal-card-head .delete, .modal-card-foot .button") || []
+  ).forEach(($close) => {
+    const $target = $close.closest(".modal");
 
-    $close.addEventListener('click', () => {
+    $close.addEventListener("click", () => {
       closeModal($target);
     });
   });
@@ -39,4 +37,4 @@ window.addEventListener('DOMContentLoaded', () => {
   //     closeAllModals();
   //   }
   // });
-});
+};

@@ -10,18 +10,12 @@ namespace WorkDo1.Data;
 
 public class WorkOfDayData
 {
-    private MongoClient _mongoClient = null;
-    private IMongoDatabase _database = null;
     private IMongoCollection<WorkOfDayModel> _workOfDayTable = null;
 
-     public WorkOfDayData() { 
-      var settings = MongoClientSettings.FromConnectionString("mongodb+srv://thanhthang123456:thanhthang123456@cluster0.1ubayq8.mongodb.net/?retryWrites=true&w=majority");
-      settings.ServerApi = new ServerApi(ServerApiVersion.V1);
-
-      _mongoClient = new MongoClient(settings);
-      _database = _mongoClient.GetDatabase("todolist");
-      _workOfDayTable = _database.GetCollection<WorkOfDayModel>("WorkOfDay");
-    }
+     public WorkOfDayData() {
+    ConnectMongoDB<WorkOfDayModel> connectData = new();
+    _workOfDayTable = connectData.Connect("todolist", "WorkOfDay");
+  }
     public void deleteById(string id) {
       _workOfDayTable.DeleteOne(item => item.id == id);
     }
